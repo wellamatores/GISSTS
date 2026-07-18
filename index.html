@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GIS STS — Geospatial Safety & Legal Intelligence</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* ================================================================
+           GIS STS — Full Implementation v3.0
+           Technical Specification (TZ) Compliance
+           ================================================================ */
+        
+        /* ─── Root Variables ─── */
+        :root {
+            /* Backgrounds */
+            --bg-primary: #0A0E17;
+            --bg-secondary: #111827;
+            --bg-panel: rgba(10, 14, 23, 0.92);
+            --bg-glass: rgba(17, 24, 39, 0.75);
+            
+            /* Colors */
+            --cyan: #00F0FF;
+            --cyan-secondary: #67E8F9;
+            --green: #22C55E;
+            --yellow: #EAB308;
+            --red: #EF4444;
+            --neutral: #94A3B8;
+            --text-primary: #FFFFFF;
+            --text-secondary: #E2F9FF;
+            
+            /* Effects */
+            --shadow: 0 8px 32px rgba(0, 240, 255, 0.08);
+            --glow: 0 0 40px rgba(0, 240, 255, 0.15);
+            --radius: 12px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Typography */
+            --font-heading: 'Orbitron', 'Rajdhani', sans-serif;
+            --font-body: 'Inter', 'Satoshi', sans-serif;
+            --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+        }
+        
+        /* ─── Reset ─── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            user-select: none;
+        }
+        
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; }
+        
+        /* ─── Typography ─── */
+        .font-heading { font-family: var(--font-heading); }
+        .font-mono { font-family: var(--font-mono); }
+        
+        /* ─── Glassmorphism ─── */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            box-shadow: var(--shadow);
+        }
+        
+        .glass-strong {
+            background: var(--bg-panel);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 240, 255, 0.12);
+            box-shadow: var(--shadow), var(--glow);
+        }
+        
+        /* ─── Neon Glow ─── */
+        .glow-cyan { box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
+        .glow-green { box-shadow: 0 0 30px rgba(34, 197, 94, 0.15); }
+        .glow-yellow { box-shadow: 0 0 30px rgba(234, 179, 8, 0.15); }
+        .glow-red { box-shadow: 0 0 30px rgba(239, 68, 68, 0.15); }
+        
+        /* ─── Holographic Border ─── */
+        .holographic-border {
+            position: relative;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+        }
+        .holographic-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), transparent, rgba(0, 240, 255, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        
+        /* ─── Layout ─── */
+        #app {
+            display: grid;
+            grid-template-rows: 120px 1fr 64px;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated Background Grid */
+        #app::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+        
+        /* ─── Header ─── */
+        .header {
+            grid-row: 1;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+            position: relative;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--cyan), var(--cyan-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--bg-primary);
+            position: relative;
+        }
+        
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--cyan), transparent, var(--cyan-secondary));
+            opacity: 0.5;
+            z-index: -1;
+            filter: blur(8px);
+        }
+        
+        .logo-text {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+        .logo-text .cyan { color: var(--cyan); }
+        .logo-text .white { color: var(--text-primary); }
+        
+        .logo-sub {
+            font-size: 10px;
+            color: var(--neutral);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 300;
+            display: block;
+            margin-top: -2px;
+        }
+        
+        .header-center {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .header-motto {
+            font-family: var(--font-heading);
+            font-size: 13px;
+            color: var(--cyan-secondary);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+        .header-motto span { color: var(--text-primary); font-weight: 600; }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            color: var(--neutral);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+        .header-btn:hover {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            transform: scale(1.05);
+        }
+        .header-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: var(--red);
+            border-radius: 50%;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .header-btn.has-badge { position: relative; }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--cyan-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--bg-primary);
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .user-avatar:hover {
+            transform: scale(1.05);
+            border-color: var(--cyan);
+        }
+        
+        /* ─── Navigation ─── */
+        .nav {
+            position: absolute;
+            top: 120px;
+            left: 0;
+            right: 0;
+            z-index: 9;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 0;
+            background: rgba(10, 14, 23, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.05);
+        }
+        
+        .nav-item {
+            padding: 8px 20px;
+            font-family: var(--font-body);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--neutral);
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+        }
+        .nav-item:hover { color: var(--text-primary); background: rgba(0, 240, 255, 0.05); }
+        .nav-item.active {
+            color: var(--cyan);
+            background: rgba(0, 240, 255, 0.08);
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .nav-item i { margin-right: 8px; }
+        
+        /* ─── Main Content ─── */
+        .main {
+            grid-row: 2;
+            display: grid;
+            grid-template-columns: 320px 1fr 320px;
+            gap: 12px;
+            padding: 12px 12px 8px 12px;
+            z-index: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* ─── Left Panel ─── */
+        .panel-left {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        .panel-left::-webkit-scrollbar { width: 2px; }
+        
+        .panel-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.06);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            transition: var(--transition);
+        }
+        .panel-card:hover {
+            border-color: rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow);
+        }
+        
+        .panel-card .card-title {
+            font-family: var(--font-heading);
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--neutral);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .panel-card .card-title i { color: var(--cyan); font-size: 12px; }
+        
+        /* ─── Legal Intelligence ─── */
+        .legal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 11px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .legal-item:hover { padding-left: 4px; border-color: rgba(0, 240, 255, 0.1); }
+        .legal-item .label { color: var(--text-secondary); }
+        .legal-item .status-badge {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.green { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .status-badge.yellow { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+        .status-badge.red { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        
+        .legal-detail {
+            font-size: 9px;
+            color: var(--neutral);
+            padding: 4px 0 8px 0;
+            display: none;
+            line-height: 1.6;
+        }
+        .legal-detail.active { display: block; }
+        
+        /* ─── STS-SRI Index ─── */
+        .sri-gauge {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 0;
+        }
+        
+        .sri-gauge .gauge {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .sri-gauge .gauge svg {
+            transform: rotate(-90deg);
+        }
+        
+        .sri-gauge .gauge .bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.06);
+            stroke-width: 6;
+        }
+        
+        .sri-gauge .gauge .progress {
+            fill: none;
+            stroke: var(--cyan);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+        
+        .sri-gauge .gauge .value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .sri-gauge .gauge .value .label {
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--neutral);
+            margin-left: 2px;
+        }
+        
+        .sri-metrics {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+        }
+        
+        .sri-metrics .metric {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .sri-metrics .metric .label { color: var(--neutral); }
+        .sri-metrics .metric .value { font-weight: 600; }
+        
+        .sri-metrics .metric .value.green { color: var(--green); }
+        .sri-metrics .metric .value.yellow { color: var(--yellow); }
+        .sri-metrics .metric .value.red { color: var(--red); }
+        
+        .sri-trend {
+            margin-top: 8px;
+            height: 30px;
+        }
+        
+        /* ─── AI Briefing ─── */
+        .ai-briefing {
+            position: relative;
+        }
+        
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--cyan-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            animation: pulseGlow 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.4); }
+        }
+        
+        .ai-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .ai-text {
+            font-size: 10px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex: 1;
+        }
+        .ai-text .highlight { color: var(--cyan); font-weight: 500; }
+        
+        .ai-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .ai-actions .ai-btn {
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 9px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-body);
+        }
+        .ai-actions .ai-btn:hover {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            color: var(--text-primary);
+        }
+        .ai-actions .ai-btn.primary {
+            background: var(--cyan);
+            color: var(--bg-primary);
+            border-color: var(--cyan);
+        }
+        .ai-actions .ai-btn.primary:hover {
+            background: var(--cyan-secondary);
+            border-color: var(--cyan-secondary);
+        }
+        
+        /* ─── Right Panel ─── */
+        .panel-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            padding-left: 4px;
+        }
+        
+        .panel-right::-webkit-scrollbar { width: 2px; }
+        
+        /* ─── Global Coverage ─── */
+        .coverage-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            text-align: center;
+        }
+        
+        .coverage-stat .number {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--cyan);
+            display: block;
+        }
+        .coverage-stat .number .small {
+            font-size: 14px;
+            color: var(--neutral);
+        }
+        .coverage-stat .label {
+            font-size: 8px;
+            color: var(--neutral);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* ─── Risk Legend ─── */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            font-size: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .legend-item:hover { color: var(--text-primary); }
+        .legend-item .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .legend-item .dot.green { background: var(--green); }
+        .legend-item .dot.yellow { background: var(--yellow); }
+        .legend-item .dot.red { background: var(--red); }
+        .legend-item .dot.gray { background: var(--neutral); }
+        
+        /* ─── Emergency Services ─── */
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        
+        .emergency-card {
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .emergency-card:hover {
+            background: rgba(0, 240, 255, 0.04);
+            border-color: rgba(0, 240, 255, 0.1);
+        }
+        .emergency-card .icon {
+            font-size: 18px;
+            color: var(--cyan);
+            margin-bottom: 4px;
+        }
+        .emergency-card .name {
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .emergency-card .contact {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--cyan-secondary);
+        }
+        .emergency-card .distance {
+            font-size: 8px;
+            color: var(--neutral);
+        }
+        
+        /* ─── AI Assistant ─── */
+        .ai-assistant {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.04), rgba(103, 232, 249, 0.02));
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+        }
+        
+        .ai-assistant .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .ai-assistant .header .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--cyan-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--bg-primary);
+        }
+        .ai-assistant .header .name {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .ai-assistant .header .status {
+            font-size: 8px;
+            color: var(--green);
+            margin-left: auto;
+        }
+        
+        .ai-assistant .chat {
+            font-size: 10px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .ai-assistant .chat .agent { color: var(--cyan); font-weight: 500; }
+        
+        .ai-assistant .input-group {
+            display: flex;
+            gap: 6px;
+        }
+        .ai-assistant .input-group input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 240, 255, 0.06);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: var(--text-primary);
+            font-size: 10px;
+            font-family: var(--font-body);
+            outline: none;
+            transition: var(--transition);
+        }
+        .ai-assistant .input-group input:focus {
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+        .ai-assistant .input-group input::placeholder {
+            color: var(--neutral);
+        }
+        .ai-assistant .input-group button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            background: var(--cyan);
+            color: var(--bg-primary);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .ai-assistant .input-group button:hover {
+            background: var(--cyan-secondary);
+        }
+        
+        /* ─── Center: Globe ─── */
+        .globe-container {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.02), transparent 70%);
+            border: 1px solid rgba(0, 240, 255, 0.04);
+        }
+        
+        #globeCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .globe-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            font-size: 9px;
+            color: var(--neutral);
+        }
+        .globe-overlay .item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .globe-overlay .item .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        /* ─── Bottom Bar ─── */
+        .bottom-bar {
+            grid-row: 3;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(0, 240, 255, 0.04);
+            font-size: 10px;
+            color: var(--neutral);
+        }
+        
+        .bottom-bar .left {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .bottom-bar .left .item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bottom-bar .left .item .value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .bottom-bar .left .item .value.cyan { color: var(--cyan); }
+        .bottom-bar .left .item .value.green { color: var(--green); }
+        .bottom-bar .left .item .value.yellow { color: var(--yellow); }
+        .bottom-bar .left .item .value.red { color: var(--red); }
+        
+        .bottom-bar .right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .bottom-bar .right .status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .bottom-bar .right .status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        .bottom-bar .right .status .dot.online { background: var(--green); }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* ─── Animations ─── */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease forwards;
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.6s ease forwards;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* ─── Responsive ─── */
+        @media (max-width: 1400px) {
+            .main { grid-template-columns: 280px 1fr 280px; gap: 10px; padding: 10px; }
+        }
+        
+        @media (max-width: 1200px) {
+            .main { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; gap: 10px; }
+            .panel-left, .panel-right { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 280px; overflow-y: auto; }
+            .globe-container { min-height: 400px; }
+        }
+        
+        @media (max-width: 768px) {
+            .header { padding: 0 16px; flex-wrap: wrap; height: auto; min-height: 80px; }
+            .header-center { display: none; }
+            .nav { top: 120px; flex-wrap: wrap; padding: 4px 8px; gap: 2px; }
+            .nav-item { padding: 4px 10px; font-size: 9px; }
+            .main { padding: 8px; }
+            .panel-left, .panel-right { grid-template-columns: 1fr; max-height: 200px; }
+            .bottom-bar { flex-wrap: wrap; padding: 4px 12px; font-size: 8px; gap: 4px; }
+            .bottom-bar .left { flex-wrap: wrap; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    
+    <!-- ─── HEADER ─── -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div>
+                    <div class="logo-text">
+                        <span class="cyan">GIS</span><span class="white"> STS</span>
+                    </div>
+                    <span class="logo-sub">Geospatial Safety &amp; Legal Intelligence</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="header-motto">
+                <span>To be informed</span> is to be protected
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="header-btn has-badge" onclick="notify('🔔 3 new alerts')">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </button>
+            <button class="header-btn" onclick="notify('⚙️ Settings opened')">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+            <button class="header-btn" onclick="toggleFullscreen()">
+                <i class="fas fa-expand"></i>
+            </button>
+            <div class="user-avatar">JD</div>
+        </div>
+    </header>
+    
+    <!-- ─── NAVIGATION ─── -->
+    <nav class="nav">
+        <button class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</button>
+        <button class="nav-item" data-tab="map"><i class="fas fa-globe"></i> World Map</button>
+        <button class="nav-item" data-tab="legal"><i class="fas fa-gavel"></i> Legal Intelligence</button>
+        <button class="nav-item" data-tab="risk"><i class="fas fa-chart-line"></i> Risk Analytics</button>
+        <button class="nav-item" data-tab="emergency"><i class="fas fa-ambulance"></i> Emergency Services</button>
+        <button class="nav-item" data-tab="ai"><i class="fas fa-robot"></i> AI Briefing</button>
+        <button class="nav-item" data-tab="community"><i class="fas fa-users"></i> Community Reports</button>
+        <button class="nav-item" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
+    </nav>
+    
+    <!-- ─── MAIN ─── -->
+    <div class="main">
+        
+        <!-- ─── LEFT PANEL ─── -->
+        <div class="panel-left">
+            
+            <!-- Legal Intelligence -->
+            <div class="panel-card glass fade-in">
+                <div class="card-title">
+                    <span><i class="fas fa-gavel"></i> Legal Intelligence</span>
+                    <span style="font-size:8px;color:var(--neutral);">v2.0</span>
+                </div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-handcuffs" style="color:var(--cyan);margin-right:6px;"></i>Criminal Law</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">Petty theft common in tourist areas. Violent crime rare. Always carry ID.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-file-contract" style="color:var(--cyan);margin-right:6px;"></i>Administrative Law</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">ID required for all adults. Strict drug laws. Fines for littering.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-passport" style="color:var(--cyan);margin-right:6px;"></i>Immigration Rules</span>
+                    <span class="status-badge green">Safe</span>
+                </div>
+                <div class="legal-detail">Visa-free for 90 days. Passport valid 6 months. Registration required.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-box" style="color:var(--cyan);margin-right:6px;"></i>Customs Regulations</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">Strict import/export rules. Declare valuables. Restricted items list.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-wine-bottle" style="color:var(--cyan);margin-right:6px;"></i>Alcohol Regulations</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">18+ legal. Public drinking restricted. No sale after 10 PM.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-landmark" style="color:var(--cyan);margin-right:6px;"></i>Cultural Norms</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">Conservative dress in religious sites. Respect local traditions.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-camera" style="color:var(--cyan);margin-right:6px;"></i>Photography Restrictions</span>
+                    <span class="status-badge green">Safe</span>
+                </div>
+                <div class="legal-detail">Allowed in public spaces. No photos of military/strategic sites.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-rainbow" style="color:var(--cyan);margin-right:6px;"></i>LGBTQ+ Status</span>
+                    <span class="status-badge red">High Risk</span>
+                </div>
+                <div class="legal-detail">Severe restrictions in some regions. Exercise extreme caution. Avoid PDAs.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-venus-mars" style="color:var(--cyan);margin-right:6px;"></i>Women's Rights</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">Equal rights in law, but social norms vary. Dress code advised.</div>
+                
+                <div class="legal-item" onclick="toggleLegal(this)">
+                    <span class="label"><i class="fas fa-users" style="color:var(--cyan);margin-right:6px;"></i>Public Conduct</span>
+                    <span class="status-badge yellow">Caution</span>
+                </div>
+                <div class="legal-detail">Respectful behaviour expected. No public intoxication. Fines apply.</div>
+                
+                <div style="margin-top:6px;font-size:8px;color:var(--neutral);display:flex;justify-content:space-between;">
+                    <span>📅 Updated: Today</span>
+                    <span>🔵 Trust Score: 0.92</span>
+                </div>
+            </div>
+            
+            <!-- STS-SRI Safety & Risk Index -->
+            <div class="panel-card glass fade-in" style="animation-delay:0.1s;">
+                <div class="card-title">
+                    <span><i class="fas fa-shield-halved"></i> STS-SRI Index</span>
+                    <span style="font-size:8px;color:var(--cyan);">Live</span>
+                </div>
+                
+                <div class="sri-gauge">
+                    <div class="gauge">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="bg" cx="40" cy="40" r="32"/>
+                            <circle class="progress" cx="40" cy="40" r="32" 
+                                    stroke-dasharray="201" stroke-dashoffset="56" id="sriGauge"/>
+                        </svg>
+                        <div class="value">72<span class="label">%</span></div>
+                    </div>
+                    <div class="sri-metrics">
+                        <div class="metric"><span class="label">Overall Risk</span><span class="value yellow">Medium</span></div>
+                        <div class="metric"><span class="label">Personal Safety</span><span class="value green">Good</span></div>
+                        <div class="metric"><span class="label">Theft Risk</span><span class="value yellow">Medium</span></div>
+                        <div class="metric"><span class="label">Health Risk</span><span class="value green">Low</span></div>
+                        <div class="metric"><span class="label">Transport Safety</span><span class="value green">Good</span></div>
+                        <div class="metric"><span class="label">Night Safety</span><span class="value yellow">Caution</span></div>
+                        <div class="metric"><span class="label">Women's Safety</span><span class="value yellow">Caution</span></div>
+                        <div class="metric"><span class="label">LGBTQ+ Safety</span><span class="value red">High Risk</span></div>
+                        <div class="metric"><span class="label">Political Stability</span><span class="value green">Stable</span></div>
+                        <div class="metric"><span class="label">Legal Transparency</span><span class="value yellow">Moderate</span></div>
+                    </div>
+                </div>
+                
+                <div class="sri-trend">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- AI Travel Briefing -->
+            <div class="panel-card glass fade-in" style="animation-delay:0.2s;">
+                <div class="card-title">
+                    <span><i class="fas fa-robot"></i> AI Travel Briefing</span>
+                    <span style="font-size:8px;color:var(--cyan);">v2.1</span>
+                </div>
+                
+                <div class="ai-content">
+                    <div class="ai-avatar"><i class="fas fa-brain"></i></div>
+                    <div class="ai-text">
+                        <div><span class="highlight">📍 Paris, France</span></div>
+                        <div style="font-size:9px;color:var(--neutral);">Current Risk: <span class="highlight">🟡 Medium</span></div>
+                        <div style="font-size:9px;color:var(--neutral);">⚠️ 2 active alerts in your area</div>
+                        <div style="font-size:9px;color:var(--text-secondary);margin-top:4px;">
+                            <i class="fas fa-shield" style="color:var(--cyan);"></i> Recommended: Avoid northern suburbs after 10 PM
+                        </div>
+                        <div style="font-size:9px;color:var(--text-secondary);">
+                            <i class="fas fa-phone" style="color:var(--cyan);"></i> Emergency: 112 | Tourist Police: +33 1 40 22 22 22
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-actions">
+                    <button class="ai-btn primary" onclick="generateBriefing()"><i class="fas fa-file-pdf"></i> Generate Briefing</button>
+                    <button class="ai-btn" onclick="notify('🤖 AI Assistant ready')"><i class="fas fa-comment"></i> Ask AI</button>
+                    <button class="ai-btn" onclick="notify('📊 Risk analysis refreshed')"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- ─── CENTER: GLOBE ─── -->
+        <div class="globe-container glass fade-in" style="animation-delay:0.15s;">
+            <canvas id="globeCanvas"></canvas>
+            
+            <div class="globe-overlay">
+                <div class="item"><span class="dot" style="background:var(--green);"></span> Safe</div>
+                <div class="item"><span class="dot" style="background:var(--yellow);"></span> Caution</div>
+                <div class="item"><span class="dot" style="background:var(--red);"></span> High Risk</div>
+                <div class="item"><span class="dot" style="background:var(--neutral);"></span> No Data</div>
+                <div class="item" style="border-left:1px solid rgba(255,255,255,0.05);padding-left:12px;">
+                    <i class="fas fa-location-dot" style="color:var(--cyan);"></i> 195 Countries
+                </div>
+            </div>
+        </div>
+        
+        <!-- ─── RIGHT PANEL ─── -->
+        <div class="panel-right">
+            
+            <!-- Global Coverage -->
+            <div class="panel-card glass fade-in slide-in-right">
+                <div class="card-title">
+                    <span><i class="fas fa-globe"></i> Global Coverage</span>
+                    <span style="font-size:8px;color:var(--green);"><i class="fas fa-circle"></i> Live</span>
+                </div>
+                
+                <div class="coverage-stats">
+                    <div class="coverage-stat">
+                        <span class="number" id="countryCounter">195</span>
+                        <span class="label">Countries</span>
+                    </div>
+                    <div class="coverage-stat">
+                        <span class="number" id="monitoringCounter">87</span>
+                        <span class="label">Active Monitoring</span>
+                    </div>
+                    <div class="coverage-stat">
+                        <span class="number" id="advisoryCounter">12</span>
+                        <span class="label">Advisory Updates</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Risk Legend -->
+            <div class="panel-card glass slide-in-right" style="animation-delay:0.1s;">
+                <div class="card-title">
+                    <span><i class="fas fa-legend"></i> Risk Legend</span>
+                    <span style="font-size:8px;color:var(--neutral);">Interactive</span>
+                </div>
+                
+                <div class="legend-item" onclick="notify('🟢 Showing Safe zones')">
+                    <span class="dot green"></span> Low Risk — Standard precautions
+                </div>
+                <div class="legend-item" onclick="notify('🟡 Showing Caution zones')">
+                    <span class="dot yellow"></span> Medium Risk — Exercise caution
+                </div>
+                <div class="legend-item" onclick="notify('🔴 Showing High Risk zones')">
+                    <span class="dot red"></span> High Risk — Reconsider travel
+                </div>
+                <div class="legend-item" onclick="notify('⬜ No data available')">
+                    <span class="dot gray"></span> No Data — Information pending
+                </div>
+            </div>
+            
+            <!-- Emergency Services -->
+            <div class="panel-card glass slide-in-right" style="animation-delay:0.2s;">
+                <div class="card-title">
+                    <span><i class="fas fa-ambulance"></i> Emergency Services</span>
+                    <span style="font-size:8px;color:var(--cyan);">24/7</span>
+                </div>
+                
+                <div class="emergency-grid">
+                    <div class="emergency-card" onclick="notify('📞 Police: 112')">
+                        <div class="icon"><i class="fas fa-shield"></i></div>
+                        <div class="name">Police</div>
+                        <div class="contact">112</div>
+                        <div class="distance">• 0.6 km</div>
+                    </div>
+                    <div class="emergency-card" onclick="notify('🏥 Hospital: 1.2 km')">
+                        <div class="icon"><i class="fas fa-hospital"></i></div>
+                        <div class="name">Hospital</div>
+                        <div class="contact">+33 1 40 22 22 22</div>
+                        <div class="distance">• 1.2 km</div>
+                    </div>
+                    <div class="emergency-card" onclick="notify('🏛️ Embassy: 2.5 km')">
+                        <div class="icon"><i class="fas fa-flag"></i></div>
+                        <div class="name">Embassy</div>
+                        <div class="contact">+33 1 40 22 22 33</div>
+                        <div class="distance">• 2.5 km</div>
+                    </div>
+                    <div class="emergency-card" onclick="notify('💊 Pharmacy: 0.3 km')">
+                        <div class="icon"><i class="fas fa-prescription-bottle"></i></div>
+                        <div class="name">Pharmacy</div>
+                        <div class="contact">+33 1 40 22 22 44</div>
+                        <div class="distance">• 0.3 km</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Assistant -->
+            <div class="panel-card glass slide-in-right" style="animation-delay:0.3s;padding:0;background:transparent;border:none;">
+                <div class="ai-assistant">
+                    <div class="header">
+                        <div class="avatar"><i class="fas fa-robot"></i></div>
+                        <div class="name">STS Assistant</div>
+                        <div class="status"><i class="fas fa-circle" style="color:var(--green);font-size:6px;"></i> Online</div>
+                    </div>
+                    
+                    <div class="chat">
+                        <div><span class="agent">🤖 Agent:</span> How can I assist with your travel safety today?</div>
+                        <div style="margin-top:4px;color:var(--text-secondary);font-size:9px;">
+                            <i class="fas fa-lightbulb" style="color:var(--yellow);"></i> Try: "Show safe routes in Paris"
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="text" placeholder="Ask about safety, laws, or routes..." id="aiInput" />
+                        <button onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    <!-- ─── BOTTOM BAR ─── -->
+    <footer class="bottom-bar">
+        <div class="left">
+            <div class="item"><i class="fas fa-globe" style="color:var(--cyan);"></i> <span class="value cyan">195</span> Countries Monitored</div>
+            <div class="item"><i class="fas fa-bell" style="color:var(--yellow);"></i> <span class="value yellow">12</span> Live Advisories</div>
+            <div class="item"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> <span class="value red">4</span> Verified Incidents</div>
+            <div class="item"><i class="fas fa-users" style="color:var(--cyan);"></i> <span class="value cyan">1,247</span> Travelers Online</div>
+            <div class="item"><i class="fas fa-brain" style="color:var(--cyan);"></i> <span class="value cyan">87%</span> AI Predictions</div>
+            <div class="item"><i class="fas fa-flag" style="color:var(--green);"></i> <span class="value green">23</span> Community Reports</div>
+        </div>
+        <div class="right">
+            <div class="status"><span class="dot online"></span> Server Online</div>
+            <div class="status"><span class="dot online"></span> API Healthy</div>
+            <span style="color:var(--neutral);font-family:var(--font-mono);font-size:9px;">v3.0</span>
+        </div>
+    </footer>
+    
+</div>
+
+<script>
+    // ================================================================
+    // GIS STS — Application Logic
+    // Technical Specification (TZ) Compliance
+    // ================================================================
+    
+    // ─── State ───
+    const state = {
+        countries: 195,
+        monitoring: 87,
+        advisories: 12,
+        incidents: 4,
+        travelers: 1247,
+        aiPredictions: 87,
+        communityReports: 23,
+        sriScore: 72,
+        selectedCountry: 'France',
+        isFullscreen: false,
+        autoRotate: true
+    };
+    
+    // ─── DOM Ready ───
+    document.addEventListener('DOMContentLoaded', () => {
+        initGlobe();
+        initTrendChart();
+        initNavigation();
+        initCounters();
+        initAI();
+        initKeyboard();
+        initAnimations();
+        
+        // Initial notifications
+        setTimeout(() => notify('🛡️ GIS STS v3.0 — System Ready'), 1000);
+        setTimeout(() => notify('🌍 195 countries loaded'), 2000);
+        setTimeout(() => notify('📊 STS-SRI Index: 72%'), 3000);
+    });
+    
+    // ─── Globe (Three.js) ───
+    function initGlobe() {
+        const canvas = document.getElementById('globeCanvas');
+        const container = canvas.parentElement;
+        const width = container.clientWidth;
+        const height = container.clientHeight || 500;
+        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvas, 
+            antialias: true,
+            alpha: true 
+        });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Lights
+        const ambient = new THREE.AmbientLight(0x222244, 0.5);
+        scene.add(ambient);
+        
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        sunLight.position.set(10, 10, 10);
+        scene.add(sunLight);
+        
+        const backLight = new THREE.DirectionalLight(0x4488ff, 0.3);
+        backLight.position.set(-10, -5, -10);
+        scene.add(backLight);
+        
+        // Earth
+        const radius = 2;
+        const geometry = new THREE.SphereGeometry(radius, 64, 64);
+        
+        // Create texture canvas
+        const textureCanvas = document.createElement('canvas');
+        textureCanvas.width = 1024;
+        textureCanvas.height = 512;
+        const ctx = textureCanvas.getContext('2d');
+        
+        // Ocean
+        const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+        gradient.addColorStop(0, '#0a1628');
+        gradient.addColorStop(0.3, '#0d1f3c');
+        gradient.addColorStop(0.5, '#0f2847');
+        gradient.addColorStop(0.7, '#0d1f3c');
+        gradient.addColorStop(1, '#0a1628');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1024, 512);
+        
+        // Continents with risk colors
+        const continents = [
+            // Europe (green)
+            { x: 520, y: 200, rx: 80, ry: 60, color: '#22C55E' },
+            { x: 550, y: 220, rx: 40, ry: 30, color: '#22C55E' },
+            // Russia (red)
+            { x: 650, y: 190, rx: 120, ry: 50, color: '#EF4444' },
+            { x: 700, y: 210, rx: 60, ry: 30, color: '#EF4444' },
+            // China (red)
+            { x: 780, y: 230, rx: 90, ry: 40, color: '#EF4444' },
+            // Japan (green)
+            { x: 870, y: 240, rx: 25, ry: 40, color: '#22C55E' },
+            // SE Asia (yellow)
+            { x: 770, y: 290, rx: 60, ry: 40, color: '#EAB308' },
+            // India (yellow)
+            { x: 710, y: 280, rx: 40, ry: 50, color: '#EAB308' },
+            // Australia (green)
+            { x: 820, y: 400, rx: 70, ry: 50, color: '#22C55E' },
+            // North America (yellow)
+            { x: 260, y: 170, rx: 80, ry: 60, color: '#EAB308' },
+            { x: 280, y: 190, rx: 60, ry: 40, color: '#EAB308' },
+            // South America (red)
+            { x: 340, y: 330, rx: 40, ry: 70, color: '#EF4444' },
+            // Africa (yellow)
+            { x: 480, y: 320, rx: 60, ry: 70, color: '#EAB308' },
+            // Middle East (red)
+            { x: 620, y: 270, rx: 40, ry: 30, color: '#EF4444' },
+        ];
+        
+        continents.forEach(c => {
+            const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, Math.max(c.rx, c.ry));
+            grad.addColorStop(0, c.color);
+            grad.addColorStop(0.6, c.color);
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        // Glow effect
+        continents.forEach(c => {
+            ctx.shadowColor = c.color;
+            ctx.shadowBlur = 30;
+            ctx.fillStyle = c.color;
+            ctx.globalAlpha = 0.1;
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.rx * 1.5, c.ry * 1.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+        });
+        
+        // Connection lines
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 50; i++) {
+            const x1 = Math.random() * 1024;
+            const y1 = Math.random() * 512;
+            const x2 = Math.random() * 1024;
+            const y2 = Math.random() * 512;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.quadraticCurveTo((x1+x2)/2 + (Math.random()-0.5)*200, (y1+y2)/2 + (Math.random()-0.5)*200, x2, y2);
+            ctx.stroke();
+        }
+        
+        const texture = new THREE.CanvasTexture(textureCanvas);
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        
+        const material = new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.3,
+            metalness: 0.1,
+            emissive: new THREE.Color(0x112244),
+            emissiveIntensity: 0.1,
+        });
+        
+        const earth = new THREE.Mesh(geometry, material);
+        scene.add(earth);
+        
+        // Atmosphere glow
+        const glowGeo = new THREE.SphereGeometry(radius * 1.06, 64, 64);
+        const glowMat = new THREE.MeshBasicMaterial({
+            color: 0x00F0FF,
+            transparent: true,
+            opacity: 0.06,
+            side: THREE.BackSide,
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        scene.add(glow);
+        
+        // Stars
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const positions = new Float32Array(starCount * 3);
+        const colors = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            const r = 20 + Math.random() * 50;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
+            positions[i*3+1] = r * Math.cos(phi);
+            positions[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+            const b = 0.5 + Math.random() * 0.5;
+            colors[i*3] = b;
+            colors[i*3+1] = b;
+            colors[i*3+2] = b * (0.8 + Math.random() * 0.2);
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        starGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        const starMat = new THREE.PointsMaterial({
+            size: 0.08,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending,
+        });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+        
+        camera.position.set(0, 0, 6);
+        
+        // Controls
+        let isDragging = false;
+        let prevMouse = { x: 0, y: 0 };
+        let rotation = { x: 0, y: 0 };
+        let autoRotate = true;
+        
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            prevMouse.x = e.clientX;
+            prevMouse.y = e.clientY;
+            autoRotate = false;
+        });
+        
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = (e.clientX - prevMouse.x) * 0.005;
+            const dy = (e.clientY - prevMouse.y) * 0.005;
+            rotation.y += dx;
+            rotation.x += dy;
+            prevMouse.x = e.clientX;
+            prevMouse.y = e.clientY;
+        });
+        
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            setTimeout(() => { autoRotate = true; }, 3000);
+        });
+        
+        // Resize
+        function resize() {
+            const w = container.clientWidth;
+            const h = container.clientHeight || 500;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
+        
+        window.addEventListener('resize', resize);
+        new ResizeObserver(resize).observe(container);
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (autoRotate) {
+                rotation.y += 0.002;
+            }
+            
+            earth.rotation.x = rotation.x;
+            earth.rotation.y = rotation.y;
+            glow.rotation.x = rotation.x;
+            glow.rotation.y = rotation.y;
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Store for later use
+        window.__globe = { scene, camera, renderer, earth, rotation, autoRotate };
+    }
+    
+    // ─── Trend Chart ───
+    function initTrendChart() {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Risk Index',
+                    data: [65, 68, 72, 70, 75, 72, 68],
+                    borderColor: '#00F0FF',
+                    backgroundColor: 'rgba(0, 240, 255, 0.05)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2,
+                    borderWidth: 1.5,
+                }, {
+                    label: 'Safety Score',
+                    data: [72, 70, 68, 72, 65, 68, 72],
+                    borderColor: '#22C55E',
+                    backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2,
+                    borderWidth: 1.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false, beginAtZero: true, max: 100 }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    }
+    
+    // ─── Navigation ───
+    function initNavigation() {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+                notify(`📍 ${this.textContent.trim()} view`);
+            });
+        });
+    }
+    
+    // ─── Counters ───
+    function initCounters() {
+        animateCounter('countryCounter', 0, state.countries, 2000);
+        animateCounter('monitoringCounter', 0, state.monitoring, 1500);
+        animateCounter('advisoryCounter', 0, state.advisories, 1000);
+    }
+    
+    function animateCounter(id, start, end, duration) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const startTime = Date.now();
+        
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const value = Math.round(start + (end - start) * easeOutCubic(progress));
+            el.textContent = value;
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        update();
+    }
+    
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    
+    // ─── AI ───
+    function initAI() {
+        document.getElementById('aiInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') askAI();
+        });
+    }
+    
+    function askAI() {
+        const input = document.getElementById('aiInput');
+        const query = input.value.trim();
+        if (!query) return;
+        
+        const responses = [
+            "Based on current data, that area is safe during daytime.",
+            "Legal restrictions apply. Consult the Legal Intelligence panel.",
+            "Emergency services are available 24/7. Call 112 for immediate assistance.",
+            "Cultural norms suggest conservative dress in this region.",
+            "The STS-SRI index shows moderate risk. Exercise caution.",
+            "Recent incidents have been reported. Stay vigilant.",
+            "Safe routes are available. Check the Emergency Services panel."
+        ];
+        
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        notify(`🤖 ${response}`);
+        input.value = '';
+    }
+    
+    function generateBriefing() {
+        notify('📄 Generating personalized briefing...');
+        setTimeout(() => {
+            notify('✅ Briefing ready! Check AI panel.');
+        }, 1500);
+    }
+    
+    // ─── Keyboard ───
+    function initKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'h' || e.key === 'H') notify('🏠 Home');
+            if (e.key === 'm' || e.key === 'M') notify('🗺️ Map view');
+            if (e.key === 'l' || e.key === 'L') notify('⚖️ Legal view');
+            if (e.key === 'e' || e.key === 'E') notify('🚑 Emergency view');
+            if (e.key === 'a' || e.key === 'A') notify('🤖 AI view');
+            if (e.key === 'F11') toggleFullscreen();
+            if (e.key === 'Escape') {
+                if (document.fullscreenElement) document.exitFullscreen();
+            }
+        });
+    }
+    
+    // ─── Animations ───
+    function initAnimations() {
+        // Animate SRI gauge
+        const gauge = document.getElementById('sriGauge');
+        if (gauge) {
+            const circumference = 201;
+            const offset = circumference * (1 - state.sriScore / 100);
+            setTimeout(() => {
+                gauge.style.strokeDashoffset = offset;
+            }, 500);
+        }
+        
+        // Stagger panel cards
+        document.querySelectorAll('.panel-card').forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + i * 80);
+        });
+    }
+    
+    // ─── Legal Toggle ───
+    function toggleLegal(el) {
+        const detail = el.nextElementSibling;
+        if (detail && detail.classList.contains('legal-detail')) {
+            detail.classList.toggle('active');
+        }
+    }
+    
+    // ─── Fullscreen ───
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            state.isFullscreen = true;
+        } else {
+            document.exitFullscreen();
+            state.isFullscreen = false;
+        }
+    }
+    
+    // ─── Notifications ───
+    function notify(message, type = 'info') {
+        const container = document.getElementById('notificationContainer') || createNotificationContainer();
+        const el = document.createElement('div');
+        el.className = `notification ${type}`;
+        el.textContent = message;
+        container.appendChild(el);
+        
+        setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(80px)';
+            setTimeout(() => el.remove(), 300);
+        }, 3500);
+    }
+    
+    function createNotificationContainer() {
+        const container = document.createElement('div');
+        container.id = 'notificationContainer';
+        container.style.cssText = `
+            position: fixed; top: 140px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 6px;
+            max-width: 320px; font-family: 'Inter', sans-serif;
+        `;
+        document.body.appendChild(container);
+        
+        // Add styles for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            .notification {
+                background: rgba(10, 14, 23, 0.95);
+                backdrop-filter: blur(16px);
+                border-left: 3px solid #00F0FF;
+                border-radius: 8px;
+                padding: 10px 16px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+                font-size: 12px;
+                color: #FFFFFF;
+                animation: slideIn 0.3s ease;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(0, 240, 255, 0.08);
+            }
+            .notification.info { border-left-color: #00F0FF; }
+            .notification.success { border-left-color: #22C55E; }
+            .notification.warning { border-left-color: #EAB308; }
+            .notification.error { border-left-color: #EF4444; }
+            @keyframes slideIn {
+                from { transform: translateX(80px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        return container;
+    }
+    
+    // ─── Expose to window ───
+    window.GIS_STS = {
+        state,
+        notify,
+        toggleFullscreen,
+        generateBriefing,
+        askAI,
+        toggleLegal,
+        version: '3.0.0'
+    };
+    
+    console.log('🛡️ GIS STS v3.0 — Geospatial Safety & Legal Intelligence');
+    console.log('📊 System Ready — 195 Countries Loaded');
+    console.log('💡 Use window.GIS_STS for control');
+    console.log('⌨️ Hotkeys: H (home), M (map), L (legal), E (emergency), A (AI), F11 (fullscreen)');
+</script>
+
+</body>
+</html>
