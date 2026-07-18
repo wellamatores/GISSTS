@@ -950,7 +950,14 @@
     <!-- ─── NAVIGATION ─── -->
     <nav class="nav">
         <button class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</button>
-        <button class="nav-item" data-tab="map"><i class="fas fa-globe"></i> World Map</button>
+        
+        <!-- WORLD MAP — ССЫЛКА НА МОДУЛЬ -->
+        <a href="https://wellamatores.github.io/gis-sts-worldmap/" target="_blank" style="text-decoration:none;">
+            <button class="nav-item" style="color:var(--cyan);border:1px solid rgba(0,240,255,0.15);">
+                <i class="fas fa-map"></i> WORLD MAP 2D
+            </button>
+        </a>
+        
         <button class="nav-item" data-tab="legal"><i class="fas fa-gavel"></i> Legal Intelligence</button>
         <button class="nav-item" data-tab="risk"><i class="fas fa-chart-line"></i> Risk Analytics</button>
         <button class="nav-item" data-tab="emergency"><i class="fas fa-ambulance"></i> Emergency Services</button>
@@ -1756,6 +1763,7 @@
     
     console.log('🛡️ GIS STS v3.0 — Geospatial Safety & Legal Intelligence');
     console.log('📊 System Ready — 195 Countries Loaded');
+    console.log('🗺️ WORLD MAP: https://wellamatores.github.io/gis-sts-worldmap/');
     console.log('💡 Use window.GIS_STS for control');
     console.log('⌨️ Hotkeys: H (home), M (map), L (legal), E (emergency), A (AI), F11 (fullscreen)');
 </script>
