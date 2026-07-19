@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GIS STS — Geospatial Safety & Legal Intelligence v5.0</title>
+  <title>GIS STS — Geospatial Safety & Legal Intelligence v6.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -16,11 +16,12 @@
     :root {
       --bg-primary: #0b0d15;
       --bg-secondary: #11141f;
-      --bg-panel: rgba(18, 24, 38, 0.85);
+      --bg-panel: rgba(18, 24, 38, 0.92);
       --bg-card: rgba(255, 255, 255, 0.03);
       --border-glass: rgba(0, 255, 255, 0.12);
       --cyan: #00f0ff;
       --cyan-dim: rgba(0, 240, 255, 0.08);
+      --cyan-glow: rgba(0, 240, 255, 0.15);
       --red: #ff4d7a;
       --gold: #ffc857;
       --green: #6fcf97;
@@ -29,12 +30,16 @@
       --text-muted: #5c6f92;
       --shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.8);
       --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --font-heading: 'Orbitron', 'Rajdhani', sans-serif;
+      --font-body: 'Inter', 'Satoshi', sans-serif;
     }
 
     [data-theme="light"] {
       --bg-primary: #f0f4f8;
       --bg-secondary: #ffffff;
-      --bg-panel: rgba(255, 255, 255, 0.9);
+      --bg-panel: rgba(255, 255, 255, 0.92);
       --bg-card: rgba(0, 0, 0, 0.02);
       --border-glass: rgba(0, 0, 0, 0.1);
       --text-primary: #0b0d15;
@@ -44,7 +49,7 @@
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       background: var(--bg-primary);
       color: var(--text-primary);
       display: flex;
@@ -97,7 +102,7 @@
       margin-bottom: 20px;
     }
     .splash-content h1 {
-      font-family: 'Orbitron', sans-serif;
+      font-family: var(--font-heading);
       font-size: 48px;
       font-weight: 700;
       letter-spacing: 2px;
@@ -142,10 +147,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 12px 8px 12px;
+      padding: 10px 16px 8px 16px;
       background: var(--bg-panel);
-      border-radius: 20px;
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-glass);
       flex-wrap: wrap;
       gap: 10px;
@@ -154,15 +159,22 @@
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
     .logo-icon {
-      font-size: 28px;
-      color: var(--cyan);
-      filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4));
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan-glow));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--bg-primary);
+      box-shadow: 0 0 30px var(--cyan-glow);
     }
     .logo-text {
-      font-family: 'Orbitron', sans-serif;
+      font-family: var(--font-heading);
       font-weight: 700;
       font-size: 22px;
       letter-spacing: 1px;
@@ -170,22 +182,24 @@
     .logo-text span:first-child { color: var(--cyan); }
     .logo-text span:last-child { color: var(--text-primary); }
     .subtitle {
-      font-size: 11px;
-      letter-spacing: 0.5px;
+      font-size: 10px;
+      letter-spacing: 1px;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: -2px;
+      text-transform: uppercase;
     }
     .motto {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 500;
-      font-size: 18px;
+      font-size: 16px;
       color: var(--text-secondary);
       border-left: 2px solid var(--cyan);
       padding-left: 16px;
+      letter-spacing: 0.5px;
     }
     .header-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
@@ -196,7 +210,7 @@
       width: 38px;
       height: 38px;
       color: var(--text-secondary);
-      font-size: 16px;
+      font-size: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -213,28 +227,28 @@
     .badge::after {
       content: '3';
       position: absolute;
-      top: -5px;
-      right: -5px;
+      top: -4px;
+      right: -4px;
       background: var(--red);
       color: white;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 1px 6px;
       border-radius: 20px;
       border: 1px solid var(--bg-secondary);
     }
     .avatar {
       width: 38px;
       height: 38px;
-      border-radius: 40px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #00f0ff33, #003c42);
-      border: 1px solid var(--cyan);
+      border: 2px solid var(--cyan);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       color: var(--text-primary);
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
       transition: var(--transition);
     }
@@ -246,19 +260,19 @@
     /* ===== NAV ===== */
     .nav {
       display: flex;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: 4px;
+      padding: 6px 14px;
       background: var(--bg-panel);
       border-radius: 40px;
       border: 1px solid var(--border-glass);
       flex-wrap: wrap;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       margin-top: 12px;
     }
     .nav-item {
       padding: 6px 18px;
       border-radius: 40px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
       transition: var(--transition);
@@ -269,6 +283,7 @@
       align-items: center;
       gap: 6px;
       text-decoration: none;
+      font-family: var(--font-body);
     }
     .nav-item:hover { color: var(--text-primary); background: var(--bg-card); }
     .nav-item.active { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.2); }
@@ -302,9 +317,9 @@
     }
     .panel {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
-      padding: 14px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      padding: 16px;
       border: 1px solid var(--border-glass);
       overflow-y: auto;
       max-height: 680px;
@@ -314,8 +329,8 @@
 
     .panel-center {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
       padding: 6px;
       position: relative;
@@ -341,21 +356,21 @@
       height: 100% !important;
     }
 
-    /* ===== NEW: SCENE OVERLAY ===== */
+    /* ===== SCENE OVERLAY ===== */
     .scene-overlay {
       position: absolute;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      padding: 6px 16px;
-      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 6px 18px;
+      border-radius: 30px;
       border: 1px solid rgba(0, 240, 255, 0.1);
       font-size: 10px;
       color: var(--text-secondary);
       display: flex;
-      gap: 16px;
+      gap: 14px;
       pointer-events: none;
       white-space: nowrap;
     }
@@ -374,23 +389,23 @@
     .panel-title {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       letter-spacing: 0.8px;
       color: var(--text-secondary);
       border-bottom: 1px solid var(--border-glass);
       padding-bottom: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .panel-title i { color: var(--cyan); margin-right: 8px; }
+    .panel-title i { color: var(--cyan); margin-right: 6px; }
 
     .legal-item {
       display: flex;
       justify-content: space-between;
       padding: 4px 0;
-      font-size: 13px;
+      font-size: 12px;
       border-bottom: 1px solid var(--border-glass);
       cursor: pointer;
       transition: var(--transition);
@@ -400,16 +415,28 @@
     .status-caution { color: var(--gold); }
     .status-risk { color: var(--red); }
 
+    .legal-detail {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 4px 0 8px 4px;
+      display: none;
+      line-height: 1.5;
+      border-left: 2px solid var(--cyan);
+      padding-left: 10px;
+      margin-top: 2px;
+    }
+    .legal-detail.active { display: block; }
+
     .gauge {
       background: var(--bg-card);
       border-radius: 40px;
-      height: 8px;
+      height: 6px;
       width: 100%;
-      margin: 8px 0;
+      margin: 6px 0;
       overflow: hidden;
     }
     .gauge-fill {
-      height: 8px;
+      height: 6px;
       border-radius: 40px;
       width: 72%;
       background: linear-gradient(90deg, var(--gold), var(--cyan));
@@ -419,23 +446,23 @@
     .grid-metrics {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4px 16px;
-      font-size: 12px;
+      gap: 2px 14px;
+      font-size: 11px;
       margin-top: 4px;
     }
 
     .ai-brief {
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 12px;
-      margin: 12px 0;
+      margin: 10px 0;
       border-left: 3px solid var(--cyan);
     }
 
     .conn-item {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px;
       padding: 3px 0;
       border-bottom: 1px solid var(--border-glass);
     }
@@ -445,12 +472,13 @@
 
     .emergency-item {
       background: var(--bg-card);
-      border-radius: 12px;
-      padding: 8px 10px;
+      border-radius: var(--radius);
+      padding: 8px 12px;
       margin-bottom: 6px;
       border-left: 2px solid var(--cyan);
       transition: var(--transition);
       cursor: pointer;
+      font-size: 12px;
     }
     .emergency-item:hover { background: var(--cyan-dim); transform: translateX(4px); }
 
@@ -465,11 +493,12 @@
       border: 1px solid var(--border-glass);
       border-radius: 30px;
       padding: 6px 0;
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
       color: var(--text-secondary);
       transition: var(--transition);
       cursor: pointer;
+      font-family: var(--font-body);
     }
     .quick-btn i { margin-right: 4px; }
     .quick-btn:hover { background: var(--cyan-dim); border-color: var(--cyan); color: var(--cyan); transform: scale(1.02); }
@@ -480,17 +509,17 @@
       animation: pulse-sos 2s infinite;
     }
     @keyframes pulse-sos {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 122, 0.5); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 122, 0.4); }
       50% { box-shadow: 0 0 0 10px rgba(255, 77, 122, 0); }
     }
 
     .chat-area {
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 10px;
       margin: 8px 0;
-      min-height: 70px;
-      font-size: 13px;
+      min-height: 65px;
+      font-size: 12px;
     }
     .chat-input {
       display: flex;
@@ -504,6 +533,8 @@
       border-radius: 30px;
       padding: 8px 14px;
       color: var(--text-primary);
+      font-size: 12px;
+      font-family: var(--font-body);
     }
     .chat-input input:focus { outline: none; border-color: var(--cyan); }
     .chat-input button {
@@ -513,32 +544,35 @@
       padding: 0 14px;
       color: var(--cyan);
       cursor: pointer;
+      transition: var(--transition);
     }
     .chat-input button:hover { background: var(--cyan); color: var(--bg-primary); }
 
     /* ===== MIXER ===== */
     .mixer {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
-      padding: 14px 16px;
+      padding: 16px 18px;
       margin-top: 12px;
     }
     .mixer-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 18px;
+      gap: 16px;
       margin-top: 8px;
     }
     .mixer-window {
       background: var(--bg-card);
-      border-radius: 16px;
-      padding: 10px 12px;
+      border-radius: var(--radius);
+      padding: 12px 14px;
       border: 1px solid var(--border-glass);
+      transition: var(--transition);
     }
-    .mixer-window .mw-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-    .mixer-window .mw-content { min-height: 40px; font-size: 14px; margin: 6px 0; color: var(--text-primary); }
+    .mixer-window:hover { border-color: var(--cyan); }
+    .mixer-window .mw-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; }
+    .mixer-window .mw-content { min-height: 36px; font-size: 14px; margin: 6px 0; color: var(--text-primary); font-family: var(--font-heading); }
     .mw-actions { display: flex; gap: 6px; margin-top: 4px; }
     .mw-actions input {
       flex: 1;
@@ -547,16 +581,20 @@
       border-radius: 30px;
       padding: 5px 10px;
       color: var(--text-primary);
-      font-size: 12px;
+      font-size: 11px;
+      font-family: var(--font-body);
     }
+    .mw-actions input:focus { outline: none; border-color: var(--cyan); }
     .mw-actions button {
       background: var(--cyan-dim);
       border: 1px solid var(--cyan);
       color: var(--cyan);
       border-radius: 30px;
-      padding: 0 12px;
-      font-size: 12px;
+      padding: 0 14px;
+      font-size: 11px;
       cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-body);
     }
     .mw-actions button:hover { background: var(--cyan); color: var(--bg-primary); }
 
@@ -565,39 +603,40 @@
       gap: 20px;
       flex-wrap: wrap;
       margin: 10px 0 4px 0;
-      font-size: 13px;
+      font-size: 12px;
       align-items: center;
     }
-    .mixer-ext span { color: var(--text-secondary); cursor: pointer; }
+    .mixer-ext span { color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
     .mixer-ext span:hover { color: var(--cyan); }
     .mixer-ext i { margin-right: 4px; }
 
     .history-log {
       background: var(--bg-card);
-      border-radius: 12px;
+      border-radius: var(--radius);
       padding: 6px 12px;
-      font-size: 12px;
-      max-height: 60px;
+      font-size: 11px;
+      max-height: 56px;
       overflow-y: auto;
       color: var(--text-secondary);
       border: 1px solid var(--border-glass);
+      font-family: var(--font-body);
     }
 
     .stats-bar {
       display: flex;
-      gap: 20px;
-      font-size: 12px;
+      gap: 18px;
+      font-size: 11px;
       color: var(--text-muted);
       margin-top: 4px;
       flex-wrap: wrap;
     }
-    .stats-bar .stat-number { color: var(--cyan); font-weight: 600; font-family: 'Orbitron', monospace; }
+    .stats-bar .stat-number { color: var(--cyan); font-weight: 600; font-family: var(--font-heading); }
 
     /* ===== SPONSORS ===== */
     .sponsors-block {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
       padding: 16px 20px;
       margin-top: 12px;
@@ -610,7 +649,7 @@
     .sponsor-label {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 0.8px;
       color: var(--text-secondary);
       display: flex;
@@ -624,19 +663,19 @@
       align-items: center;
       gap: 8px;
       color: var(--text-secondary);
-      font-size: 13px;
+      font-size: 12px;
       opacity: 0.7;
       transition: var(--transition);
       cursor: default;
     }
     .sponsor-item:hover { opacity: 1; color: var(--text-primary); }
-    .sponsor-item i { font-size: 28px; color: var(--cyan); transition: var(--transition); }
+    .sponsor-item i { font-size: 24px; color: var(--cyan); transition: var(--transition); }
     .sponsor-item:hover i { transform: scale(1.08); color: var(--gold); }
     .badge-new {
       background: var(--cyan-dim);
       border: 1px solid var(--cyan);
       border-radius: 40px;
-      font-size: 9px;
+      font-size: 8px;
       padding: 1px 8px;
       color: var(--cyan);
       text-transform: uppercase;
@@ -645,8 +684,8 @@
     /* ===== FOUNDERS ===== */
     .founders-block {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
       padding: 18px 20px;
       margin-top: 12px;
@@ -662,22 +701,22 @@
     .founders-header h3 {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
-      font-size: 18px;
+      font-size: 17px;
       letter-spacing: 0.8px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .founders-header h3 i { color: var(--gold); font-size: 22px; }
+    .founders-header h3 i { color: var(--gold); font-size: 20px; }
     .founders-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
+      gap: 14px;
     }
     .founder-card {
       background: var(--bg-card);
-      border-radius: 16px;
-      padding: 16px 12px;
+      border-radius: var(--radius);
+      padding: 14px 10px;
       border: 1px solid var(--border-glass);
       text-align: center;
       transition: var(--transition);
@@ -687,29 +726,29 @@
     }
     .founder-card:hover { background: var(--cyan-dim); border-color: var(--cyan); transform: translateY(-4px); }
     .founder-card .avatar-icon {
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       background: linear-gradient(145deg, #00f0ff22, #003c42);
       border: 2px solid var(--cyan);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 24px;
       color: var(--cyan);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .founder-card:hover .avatar-icon { border-color: var(--gold); color: var(--gold); transform: scale(1.05); }
-    .founder-name { font-weight: 600; font-size: 15px; color: var(--text-primary); }
-    .founder-role { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-    .founder-bio { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
-    .founder-social { display: flex; gap: 10px; margin-top: 10px; }
-    .founder-social i { font-size: 16px; color: var(--text-muted); transition: var(--transition); cursor: pointer; }
+    .founder-name { font-weight: 600; font-size: 14px; color: var(--text-primary); }
+    .founder-role { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+    .founder-bio { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+    .founder-social { display: flex; gap: 8px; margin-top: 8px; }
+    .founder-social i { font-size: 14px; color: var(--text-muted); transition: var(--transition); cursor: pointer; }
     .founder-social i:hover { color: var(--cyan); transform: translateY(-2px); }
     .badge-founder {
       background: var(--gold);
       color: #0b0d15;
-      font-size: 8px;
+      font-size: 7px;
       font-weight: 700;
       padding: 1px 10px;
       border-radius: 40px;
@@ -721,10 +760,10 @@
     /* ===== NEWS TICKER ===== */
     .news-ticker-block {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
-      padding: 14px 20px;
+      padding: 12px 20px;
       margin-top: 12px;
       display: flex;
       align-items: center;
@@ -733,7 +772,7 @@
     .ticker-label {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 12px;
       letter-spacing: 0.8px;
       color: var(--cyan);
       white-space: nowrap;
@@ -741,16 +780,16 @@
       align-items: center;
       gap: 8px;
       background: var(--cyan-dim);
-      padding: 4px 16px 4px 12px;
+      padding: 4px 14px 4px 10px;
       border-radius: 40px;
       border: 1px solid var(--border-glass);
     }
-    .ticker-label i { font-size: 16px; color: var(--gold); }
+    .ticker-label i { font-size: 14px; color: var(--gold); }
     .news-ticker-wrapper {
       flex: 1;
       overflow: hidden;
       position: relative;
-      height: 28px;
+      height: 26px;
       display: flex;
       align-items: center;
     }
@@ -763,7 +802,7 @@
     .news-ticker-track .ticker-item {
       display: inline-block;
       padding: 0 40px 0 0;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-secondary);
       letter-spacing: 0.3px;
     }
@@ -771,15 +810,15 @@
     .news-ticker-track .ticker-item .badge-ticker {
       background: var(--red);
       color: #fff;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 700;
       padding: 1px 10px;
       border-radius: 40px;
       margin-left: 8px;
       text-transform: uppercase;
     }
-    .ticker-controls { display: flex; gap: 8px; color: var(--text-muted); font-size: 14px; }
-    .ticker-controls i { cursor: pointer; padding: 4px; border-radius: 50%; }
+    .ticker-controls { display: flex; gap: 6px; color: var(--text-muted); font-size: 13px; }
+    .ticker-controls i { cursor: pointer; padding: 4px; border-radius: 50%; transition: var(--transition); }
     .ticker-controls i:hover { color: var(--cyan); background: var(--cyan-dim); }
     @keyframes ticker-scroll {
       0% { transform: translateX(0); }
@@ -790,8 +829,8 @@
     /* ===== FOOTER ===== */
     .footer {
       background: var(--bg-panel);
-      backdrop-filter: blur(6px);
-      border-radius: 20px 20px 16px 16px;
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg) var(--radius-lg) 16px 16px;
       border: 1px solid var(--border-glass);
       padding: 16px 20px 6px 20px;
       margin-top: 12px;
@@ -805,14 +844,14 @@
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
       color: var(--cyan);
-      font-size: 14px;
+      font-size: 13px;
       letter-spacing: 0.5px;
       margin-bottom: 8px;
     }
-    .footer-col p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; cursor: default; }
+    .footer-col p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; cursor: default; transition: var(--transition); }
     .footer-col p:hover { color: var(--text-primary); }
     .social-icons { display: flex; gap: 12px; margin: 8px 0; }
-    .social-icons i { font-size: 18px; color: var(--text-muted); transition: var(--transition); cursor: pointer; }
+    .social-icons i { font-size: 17px; color: var(--text-muted); transition: var(--transition); cursor: pointer; }
     .social-icons i:hover { color: var(--cyan); transform: translateY(-2px); }
     .footer-bottom {
       border-top: 1px solid var(--border-glass);
@@ -820,7 +859,7 @@
       margin-top: 14px;
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       flex-wrap: wrap;
     }
@@ -845,37 +884,38 @@
       z-index: 9999;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      max-width: 380px;
     }
     .toast {
       background: var(--bg-panel);
       border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 14px 20px;
-      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      backdrop-filter: blur(12px);
       box-shadow: var(--shadow);
-      min-width: 280px;
-      max-width: 400px;
       animation: slideIn 0.4s ease;
       display: flex;
       align-items: center;
       gap: 12px;
       color: var(--text-primary);
+      font-size: 13px;
+      font-family: var(--font-body);
     }
     .toast.info { border-left: 4px solid var(--cyan); }
     .toast.success { border-left: 4px solid var(--green); }
     .toast.warning { border-left: 4px solid var(--gold); }
     .toast.error { border-left: 4px solid var(--red); }
-    .toast i { font-size: 20px; }
-    .toast-close { margin-left: auto; cursor: pointer; color: var(--text-muted); }
+    .toast i { font-size: 18px; }
+    .toast-close { margin-left: auto; cursor: pointer; color: var(--text-muted); transition: var(--transition); }
     .toast-close:hover { color: var(--text-primary); }
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(100px); }
       to { opacity: 1; transform: translateX(0); }
     }
 
-    .chart-container { height: 80px; margin-top: 6px; position: relative; }
-    .live-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); }
+    .chart-container { height: 72px; margin-top: 6px; position: relative; }
+    .live-indicator { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--green); }
     .live-indicator .pulse {
       width: 6px;
       height: 6px;
@@ -895,15 +935,32 @@
       border-radius: 0;
       background: radial-gradient(ellipse at center, #0A0E17, #050510 80%);
     }
-    #scene-container.fullscreen canvas {
-      border-radius: 0;
-    }
+    #scene-container.fullscreen canvas { border-radius: 0; }
     #scene-container.fullscreen .scene-overlay {
       bottom: 40px;
       padding: 8px 24px;
       font-size: 12px;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
     }
+
+    /* ===== NEW: TOOLTIP ===== */
+    .tooltip {
+      position: fixed;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 11px;
+      color: var(--text-primary);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 9998;
+      max-width: 200px;
+      text-align: center;
+    }
+    .tooltip.visible { opacity: 1; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1200px) {
@@ -918,21 +975,25 @@
     }
     @media (max-width: 640px) {
       .header { flex-direction: column; align-items: stretch; }
-      .motto { border-left: none; padding-left: 0; font-size: 14px; }
+      .motto { border-left: none; padding-left: 0; font-size: 13px; }
       .footer-grid { grid-template-columns: 1fr; }
       .quick-grid { grid-template-columns: 1fr 1fr; }
       .founders-grid { grid-template-columns: 1fr; }
-      .scene-overlay { font-size: 8px; padding: 4px 10px; gap: 8px; flex-wrap: wrap; justify-content: center; }
+      .scene-overlay { font-size: 8px; padding: 4px 10px; gap: 6px; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
 <body>
-<!-- SPLASH SCREEN -->
+
+<!-- ===== TOOLTIP ===== -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- ===== SPLASH SCREEN ===== -->
 <div class="splash-overlay" id="splashOverlay">
   <div class="splash-content">
     <div class="splash-icon"><i class="fas fa-shield-halved"></i></div>
     <h1>GIS STS</h1>
-    <div class="splash-sub">Geospatial Safety & Legal Intelligence v5.0</div>
+    <div class="splash-sub">Geospatial Safety & Legal Intelligence v6.0</div>
     <div class="splash-loader"><div class="splash-bar"></div></div>
   </div>
 </div>
@@ -945,16 +1006,16 @@
         <div class="logo-icon"><i class="fas fa-shield-halved"></i></div>
         <div>
           <div class="logo-text"><span>GIS</span><span>STS</span></div>
-          <div class="subtitle">Geospatial Safety & Legal Intelligence</div>
+          <div class="subtitle">Geospatial Safety &amp; Legal Intelligence</div>
         </div>
       </div>
       <div class="motto"><i class="fas fa-quote-left" style="color:var(--cyan);margin-right:6px;"></i>To be informed is to be protected</div>
       <div class="header-actions">
-        <div class="icon-btn badge" onclick="showToast('info', '📬 3 new notifications')"><i class="fas fa-bell"></i></div>
-        <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
-        <div class="icon-btn" onclick="showToast('success', '🔄 Data updated')"><i class="fas fa-sync-alt"></i></div>
-        <div class="icon-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></div>
-        <div class="avatar" onclick="showToast('info', '👤 User: John Doe · Admin')">JD</div>
+        <div class="icon-btn badge" onclick="showToast('info', '📬 3 new notifications')" title="Notifications"><i class="fas fa-bell"></i></div>
+        <div class="icon-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"></i></div>
+        <div class="icon-btn" onclick="showToast('success', '🔄 Data synchronized')" title="Sync data"><i class="fas fa-sync-alt"></i></div>
+        <div class="icon-btn" onclick="toggleFullscreen()" title="Fullscreen"><i class="fas fa-expand"></i></div>
+        <div class="avatar" onclick="showToast('info', '👤 User: John Doe · Administrator')" title="User profile">JD</div>
       </div>
     </header>
 
@@ -980,7 +1041,7 @@
       <div class="panel">
         <div class="panel-title">
           <span><i class="fas fa-scale-balanced"></i>Legal Intelligence</span>
-          <span style="font-size:11px;color:var(--text-muted);">Trust 0.92</span>
+          <span style="font-size:10px;color:var(--text-muted);">Trust 0.92</span>
         </div>
         <div class="legal-item" onclick="toggleDetail(this)"><span>Criminal Law</span><span class="status-caution">Caution</span></div>
         <div class="legal-item" onclick="toggleDetail(this)"><span>Administrative Law</span><span class="status-caution">Caution</span></div>
@@ -992,13 +1053,14 @@
         <div class="legal-item" onclick="toggleDetail(this)"><span>LGBTQ+ Status</span><span class="status-risk">High Risk</span></div>
         <div class="legal-item" onclick="toggleDetail(this)"><span>Women's Rights</span><span class="status-caution">Caution</span></div>
         <div class="legal-item" onclick="toggleDetail(this)"><span>Public Conduct</span><span class="status-caution">Caution</span></div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
-          <i class="fas fa-clock"></i> Updated Today · <span class="live-indicator" style="display:inline-flex;"><span class="pulse"></span>Live</span>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;display:flex;justify-content:space-between;">
+          <span><i class="fas fa-clock"></i> Updated Today</span>
+          <span class="live-indicator"><span class="pulse"></span>Live</span>
         </div>
 
-        <div class="panel-title" style="margin-top:14px;">
+        <div class="panel-title" style="margin-top:12px;">
           <span><i class="fas fa-chart-simple"></i>STS-SRI Index</span>
-          <span style="font-family:'Orbitron';">72%</span>
+          <span style="font-family:var(--font-heading);">72%</span>
         </div>
         <div class="gauge"><div class="gauge-fill" id="sriGauge"></div></div>
         <div class="grid-metrics">
@@ -1018,22 +1080,22 @@
           <canvas id="sriChart"></canvas>
         </div>
 
-        <div class="panel-title" style="margin-top:10px;">
+        <div class="panel-title" style="margin-top:8px;">
           <span><i class="fas fa-brain"></i>AI Travel Briefing</span>
-          <span><i class="fas fa-rotate-right" style="cursor:pointer;" onclick="refreshAI()"></i></span>
+          <span><i class="fas fa-rotate-right" style="cursor:pointer;" onclick="refreshAI()" title="Refresh AI"></i></span>
         </div>
         <div class="ai-brief" id="aiBrief">
           <div style="display:flex;gap:8px;align-items:center;">
-            <span style="font-size:22px;">🧠</span>
-            <span style="font-weight:600;">STS Assistant</span>
-            <span style="font-size:11px;color:var(--green);">● Online</span>
+            <span style="font-size:20px;">🧠</span>
+            <span style="font-weight:600;font-size:13px;">STS Assistant</span>
+            <span style="font-size:10px;color:var(--green);">● Online</span>
           </div>
-          <div style="font-size:13px;margin-top:6px;" id="aiMessage">
+          <div style="font-size:12px;margin-top:6px;" id="aiMessage">
             Click on any country. Current risk: <span style="color:var(--gold);">Medium</span> · 2 active alerts
           </div>
-          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
-            <span style="background:var(--cyan-dim);padding:2px 12px;border-radius:40px;font-size:11px;border:1px solid var(--cyan);cursor:pointer;" onclick="generatePDF()">📄 Generate PDF</span>
-            <span style="background:var(--bg-card);padding:2px 12px;border-radius:40px;font-size:11px;cursor:pointer;" onclick="openAIChat()">💬 Ask AI</span>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <span style="background:var(--cyan-dim);padding:2px 12px;border-radius:40px;font-size:10px;border:1px solid var(--cyan);cursor:pointer;" onclick="generatePDF()">📄 Generate PDF</span>
+            <span style="background:var(--bg-card);padding:2px 12px;border-radius:40px;font-size:10px;cursor:pointer;" onclick="openAIChat()">💬 Ask AI</span>
           </div>
         </div>
 
@@ -1066,39 +1128,44 @@
       <div class="panel">
         <div class="panel-title">
           <span><i class="fas fa-satellite-dish"></i>Global Coverage</span>
-          <span style="font-family:'Orbitron';">195</span>
+          <span style="font-family:var(--font-heading);">195</span>
         </div>
-        <div style="font-size:13px;display:flex;justify-content:space-between;">
+        <div style="font-size:12px;display:flex;justify-content:space-between;">
           <span><span class="live-indicator"><span class="pulse"></span>87 Active</span></span>
           <span style="color:var(--gold);">12 Updates</span>
         </div>
 
-        <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-flag"></i>Risk Legend</span></div>
-        <div><span class="dot dot-green" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--green);"></span> Low Risk &nbsp; <span class="dot dot-gold" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--gold);"></span> Medium &nbsp; <span class="dot dot-red" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);"></span> High &nbsp; <span class="dot dot-gray" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--text-muted);"></span> No Data</div>
+        <div class="panel-title" style="margin-top:10px;"><span><i class="fas fa-flag"></i>Risk Legend</span></div>
+        <div style="font-size:12px;">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);"></span> Low Risk</span>
+          <span style="margin-left:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--gold);"></span> Medium</span>
+          <span style="margin-left:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);"></span> High</span>
+          <span style="margin-left:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--text-muted);"></span> No Data</span>
+        </div>
 
-        <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-phone-volume"></i>Emergency Services</span></div>
+        <div class="panel-title" style="margin-top:10px;"><span><i class="fas fa-phone-volume"></i>Emergency Services</span></div>
         <div class="emergency-item" onclick="callEmergency('Police', '112')"><span><i class="fas fa-shield"></i> Police 112 · 0.6 km</span></div>
         <div class="emergency-item" onclick="callEmergency('Hospital', '+33 1 40 22 22 22')"><span><i class="fas fa-hospital"></i> Hospital +33 1 40 22 22 22 · 1.2 km</span></div>
         <div class="emergency-item" onclick="callEmergency('Embassy', '+33 1 40 22 22 33')"><span><i class="fas fa-flag"></i> Embassy +33 1 40 22 22 33 · 2.5 km</span></div>
         <div class="emergency-item" onclick="callEmergency('Pharmacy', '+33 1 40 22 22 44')"><span><i class="fas fa-prescription-bottle"></i> Pharmacy +33 1 40 22 22 44 · 0.3 km</span></div>
 
-        <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-bolt"></i>Quick Actions</span></div>
+        <div class="panel-title" style="margin-top:10px;"><span><i class="fas fa-bolt"></i>Quick Actions</span></div>
         <div class="quick-grid">
-          <div class="quick-btn" onclick="showToast('success','🔄 Sync completed')"><i class="fas fa-sync-alt"></i> Sync</div>
-          <div class="quick-btn" onclick="showToast('warning','📋 Report created')"><i class="fas fa-flag"></i> Report</div>
-          <div class="quick-btn" onclick="showToast('info','🗺️ Map opened')"><i class="fas fa-map"></i> Map</div>
-          <div class="quick-btn" onclick="showToast('info','📊 Analytics loaded')"><i class="fas fa-chart-line"></i> Analytics</div>
+          <div class="quick-btn" onclick="showToast('success','🔄 Synchronization complete')"><i class="fas fa-sync-alt"></i> Sync</div>
+          <div class="quick-btn" onclick="showToast('warning','📋 Report generated')"><i class="fas fa-flag"></i> Report</div>
+          <div class="quick-btn" onclick="showToast('info','🗺️ Map view opened')"><i class="fas fa-map"></i> Map</div>
+          <div class="quick-btn" onclick="showToast('info','📊 Analytics dashboard loaded')"><i class="fas fa-chart-line"></i> Analytics</div>
           <div class="quick-btn" onclick="showToast('info','🔍 Search executed')"><i class="fas fa-search"></i> Search</div>
           <div class="quick-btn sos" onclick="sosAlert()"><i class="fas fa-exclamation-triangle"></i> SOS</div>
         </div>
 
-        <div class="panel-title" style="margin-top:10px;">
+        <div class="panel-title" style="margin-top:8px;">
           <span><i class="fas fa-robot"></i>AI Assistant</span>
-          <span style="color:var(--green);font-size:12px;"><span class="live-indicator"><span class="pulse"></span>Online</span></span>
+          <span style="color:var(--green);font-size:11px;"><span class="live-indicator"><span class="pulse"></span>Online</span></span>
         </div>
         <div class="chat-area" id="chatArea">
           <div><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: How can I help you?</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
         </div>
         <div class="chat-input">
           <input type="text" placeholder="Type a message..." id="chatInput" onkeydown="if(event.key==='Enter') handleChat()" />
@@ -1111,27 +1178,27 @@
     <!-- MIXER -->
     <div class="mixer">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
-        <span style="font-family:'Orbitron';font-size:15px;color:var(--cyan);">Binary-Ternary Mixer v3.0</span>
-        <span style="font-size:12px;color:var(--text-muted);"><i class="fas fa-arrows-rotate"></i> T↔B · <span class="live-indicator" style="display:inline-flex;"><span class="pulse"></span>Active</span></span>
+        <span style="font-family:var(--font-heading);font-size:14px;color:var(--cyan);">Binary-Ternary Mixer v3.0</span>
+        <span style="font-size:11px;color:var(--text-muted);"><i class="fas fa-arrows-rotate"></i> T↔B · <span class="live-indicator" style="display:inline-flex;"><span class="pulse"></span>Active</span></span>
       </div>
       <div class="mixer-grid">
         <div class="mixer-window">
           <div class="mw-title">🔢 Binary Window (T→B)</div>
           <div class="mw-content"><span style="color:var(--text-secondary);">101010</span></div>
           <div class="mw-actions"><input type="text" value="101010" id="binaryInput" /><button onclick="convertBinary()">→</button></div>
-          <div style="font-size:11px;color:var(--text-muted);">Status: ready</div>
+          <div style="font-size:10px;color:var(--text-muted);">Status: ready</div>
         </div>
         <div class="mixer-window">
           <div class="mw-title">🔣 Ternary Window (B→T)</div>
           <div class="mw-content"><span style="color:var(--text-secondary);" id="ternaryOutput">2101</span></div>
           <div class="mw-actions"><input type="text" value="2101" id="ternaryInput" /><button onclick="convertTernary()">←</button></div>
-          <div style="font-size:11px;color:var(--text-muted);">Status: ready</div>
+          <div style="font-size:10px;color:var(--text-muted);">Status: ready</div>
         </div>
         <div class="mixer-window">
           <div class="mw-title">🧠 Smart Mixer Window (Auto)</div>
           <div class="mw-content"><span style="color:var(--cyan);" id="smartOutput">0101 ⇄ 201</span></div>
           <div class="mw-actions"><input type="text" placeholder="auto-detect" id="smartInput" /><button style="background:var(--cyan);color:var(--bg-primary);" onclick="smartConvert()">🧠 Smart</button></div>
-          <div style="font-size:11px;color:var(--text-muted);">Status: synced</div>
+          <div style="font-size:10px;color:var(--text-muted);">Status: synced</div>
         </div>
       </div>
       <div class="mixer-ext">
@@ -1156,13 +1223,13 @@
     <div class="sponsors-block">
       <div class="sponsor-label"><i class="fas fa-handshake"></i> Partners & Sponsors</div>
       <div class="sponsor-icons">
-        <span class="sponsor-item"><i class="fab fa-google"></i> <span class="brand-name">Google</span></span>
-        <span class="sponsor-item"><i class="fab fa-microsoft"></i> <span class="brand-name">Microsoft</span></span>
-        <span class="sponsor-item"><i class="fas fa-cloud"></i> <span class="brand-name">AWS</span> <span class="badge-new">premium</span></span>
-        <span class="sponsor-item"><i class="fas fa-satellite"></i> <span class="brand-name">SpaceX</span></span>
-        <span class="sponsor-item"><i class="fas fa-university"></i> <span class="brand-name">MIT</span></span>
-        <span class="sponsor-item"><i class="fas fa-shield-alt"></i> <span class="brand-name">CrowdStrike</span></span>
-        <span class="sponsor-item"><i class="fas fa-globe-asia"></i> <span class="brand-name">UN</span> <span class="badge-new">official</span></span>
+        <span class="sponsor-item"><i class="fab fa-google"></i> <span>Google</span></span>
+        <span class="sponsor-item"><i class="fab fa-microsoft"></i> <span>Microsoft</span></span>
+        <span class="sponsor-item"><i class="fas fa-cloud"></i> <span>AWS</span> <span class="badge-new">premium</span></span>
+        <span class="sponsor-item"><i class="fas fa-satellite"></i> <span>SpaceX</span></span>
+        <span class="sponsor-item"><i class="fas fa-university"></i> <span>MIT</span></span>
+        <span class="sponsor-item"><i class="fas fa-shield-alt"></i> <span>CrowdStrike</span></span>
+        <span class="sponsor-item"><i class="fas fa-globe-asia"></i> <span>UN</span> <span class="badge-new">official</span></span>
       </div>
     </div>
 
@@ -1231,18 +1298,18 @@
       <div class="ticker-label"><i class="fas fa-rss"></i> NEWS</div>
       <div class="news-ticker-wrapper" id="tickerWrapper">
         <div class="news-ticker-track" id="tickerTrack">
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:8px;"></i> <span class="highlight">Breaking:</span> New safety protocol deployed in 12 regions <span class="badge-ticker">Live</span></span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:8px;"></i> <span class="highlight">Update:</span> Legal AI v4.2 now includes real-time statute lookup</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--cyan);font-size:8px;"></i> <span class="highlight">Partnership:</span> GIS STS x SpaceX — satellite data integration announced</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--red);font-size:8px;"></i> <span class="highlight">Alert:</span> Travel advisory issued for 3 countries — check dashboard</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:8px;"></i> <span class="highlight">Release:</span> STS-SRI Index updated with new risk factors</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:8px;"></i> <span class="highlight">Event:</span> Webinar on geospatial legal intelligence — register now</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:8px;"></i> <span class="highlight">Breaking:</span> New safety protocol deployed in 12 regions <span class="badge-ticker">Live</span></span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:8px;"></i> <span class="highlight">Update:</span> Legal AI v4.2 now includes real-time statute lookup</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--cyan);font-size:8px;"></i> <span class="highlight">Partnership:</span> GIS STS x SpaceX — satellite data integration announced</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--red);font-size:8px;"></i> <span class="highlight">Alert:</span> Travel advisory issued for 3 countries — check dashboard</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:8px;"></i> <span class="highlight">Release:</span> STS-SRI Index updated with new risk factors</span>
-          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:8px;"></i> <span class="highlight">Event:</span> Webinar on geospatial legal intelligence — register now</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:6px;"></i> <span class="highlight">Breaking:</span> New safety protocol deployed in 12 regions <span class="badge-ticker">Live</span></span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:6px;"></i> <span class="highlight">Update:</span> Legal AI v4.2 now includes real-time statute lookup</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--cyan);font-size:6px;"></i> <span class="highlight">Partnership:</span> GIS STS x SpaceX — satellite data integration announced</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--red);font-size:6px;"></i> <span class="highlight">Alert:</span> Travel advisory issued for 3 countries — check dashboard</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:6px;"></i> <span class="highlight">Release:</span> STS-SRI Index updated with new risk factors</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:6px;"></i> <span class="highlight">Event:</span> Webinar on geospatial legal intelligence — register now</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:6px;"></i> <span class="highlight">Breaking:</span> New safety protocol deployed in 12 regions <span class="badge-ticker">Live</span></span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:6px;"></i> <span class="highlight">Update:</span> Legal AI v4.2 now includes real-time statute lookup</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--cyan);font-size:6px;"></i> <span class="highlight">Partnership:</span> GIS STS x SpaceX — satellite data integration announced</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--red);font-size:6px;"></i> <span class="highlight">Alert:</span> Travel advisory issued for 3 countries — check dashboard</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--green);font-size:6px;"></i> <span class="highlight">Release:</span> STS-SRI Index updated with new risk factors</span>
+          <span class="ticker-item"><i class="fas fa-circle" style="color:var(--gold);font-size:6px;"></i> <span class="highlight">Event:</span> Webinar on geospatial legal intelligence — register now</span>
         </div>
       </div>
       <div class="ticker-controls">
@@ -1256,8 +1323,8 @@
       <div class="footer-grid">
         <div class="footer-col">
           <h4><i class="fas fa-shield-halved" style="margin-right:6px;"></i>GIS STS</h4>
-          <p style="font-size:14px;font-weight:300;">Geospatial Safety & Legal Intelligence</p>
-          <p style="font-size:12px;color:var(--text-muted);">Enterprise risk analysis & legal information platform.</p>
+          <p style="font-size:13px;font-weight:300;">Geospatial Safety & Legal Intelligence</p>
+          <p style="font-size:11px;color:var(--text-muted);">Enterprise risk analysis & legal information platform.</p>
           <div class="social-icons">
             <i class="fab fa-twitter"></i><i class="fab fa-linkedin-in"></i><i class="fab fa-github"></i><i class="fab fa-youtube"></i><i class="fab fa-telegram-plane"></i>
           </div>
@@ -1268,7 +1335,7 @@
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <p>API Docs</p><p>Data Sources</p><p>Changelog v5.0</p><p>Security Whitepaper</p><p>Blog & Updates</p><p>Support Center</p>
+          <p>API Docs</p><p>Data Sources</p><p>Changelog v6.0</p><p>Security Whitepaper</p><p>Blog & Updates</p><p>Support Center</p>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
@@ -1276,13 +1343,13 @@
           <p><i class="fas fa-phone" style="color:var(--cyan);width:20px;"></i> +1 (555) 123-4567</p>
           <p><i class="fas fa-map-pin" style="color:var(--cyan);width:20px;"></i> San Francisco, CA</p>
           <div style="display:flex;gap:6px;margin-top:6px;">
-            <input type="email" placeholder="Email" id="subscribeEmail" style="background:var(--bg-card);border:1px solid var(--border-glass);border-radius:30px;padding:6px 12px;color:var(--text-primary);flex:1;" />
-            <button style="background:var(--cyan);border:none;border-radius:30px;padding:0 14px;color:var(--bg-primary);font-weight:600;cursor:pointer;" onclick="subscribe()">Subscribe</button>
+            <input type="email" placeholder="Email" id="subscribeEmail" style="background:var(--bg-card);border:1px solid var(--border-glass);border-radius:30px;padding:6px 12px;color:var(--text-primary);flex:1;font-size:11px;" />
+            <button style="background:var(--cyan);border:none;border-radius:30px;padding:0 14px;color:var(--bg-primary);font-weight:600;cursor:pointer;font-size:11px;" onclick="subscribe()">Subscribe</button>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <div><span class="status-dot"></span> System Active · v5.0.0 · © 2026 GIS STS</div>
+        <div><span class="status-dot"></span> System Active · v6.0.0 · © 2026 GIS STS</div>
         <div class="legal-links">
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
@@ -1304,7 +1371,33 @@
   (function() {
     'use strict';
 
-    // ===== SPLASH SCREEN =====
+    // ================================================================
+    // GIS STS v6.0 — Enterprise Geospatial Safety & Legal Intelligence
+    // ================================================================
+
+    // ===== STATE =====
+    const APP_STATE = {
+      version: '6.0.0',
+      countries: 195,
+      monitoring: 87,
+      advisories: 12,
+      incidents: 4,
+      travelers: 1247,
+      sriScore: 72,
+      isFullscreen: false,
+      darkMode: true,
+      tickerPaused: false,
+      convCount: 142,
+      tbCount: 68,
+      btCount: 51,
+      filteredCount: 23,
+      errorCount: 0,
+      historyCount: 12
+    };
+
+    // ================================================================
+    // SPLASH SCREEN
+    // ================================================================
     setTimeout(function() {
       const splash = document.getElementById('splashOverlay');
       if (splash) {
@@ -1315,7 +1408,9 @@
       }
     }, 2500);
 
-    // ===== TOAST SYSTEM =====
+    // ================================================================
+    // TOAST SYSTEM
+    // ================================================================
     window.showToast = function(type, message) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
@@ -1337,19 +1432,22 @@
       }, 5000);
     };
 
-    // ===== THEME TOGGLE =====
-    let darkMode = true;
+    // ================================================================
+    // THEME TOGGLE
+    // ================================================================
     window.toggleTheme = function() {
-      darkMode = !darkMode;
-      document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+      APP_STATE.darkMode = !APP_STATE.darkMode;
+      document.documentElement.setAttribute('data-theme', APP_STATE.darkMode ? 'dark' : 'light');
       const icon = document.querySelector('.icon-btn .fa-moon, .icon-btn .fa-sun');
       if (icon) {
-        icon.className = darkMode ? 'fas fa-moon' : 'fas fa-sun';
+        icon.className = APP_STATE.darkMode ? 'fas fa-moon' : 'fas fa-sun';
       }
-      showToast('info', darkMode ? '🌙 Dark theme' : '☀️ Light theme');
+      showToast('info', APP_STATE.darkMode ? '🌙 Dark theme activated' : '☀️ Light theme activated');
     };
 
-    // ===== FULLSCREEN TOGGLE =====
+    // ================================================================
+    // FULLSCREEN TOGGLE
+    // ================================================================
     let isFullscreen = false;
     const sceneContainer = document.getElementById('scene-container');
 
@@ -1377,95 +1475,69 @@
       }
     });
 
-    // ===== CHAT HANDLER =====
-    window.handleChat = function() {
-      const input = document.getElementById('chatInput');
-      if (input && input.value.trim()) {
-        const msg = input.value.trim();
-        const chatArea = document.getElementById('chatArea');
-        chatArea.innerHTML = `
-          <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
-          <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: Analyzing your query...</div>
-        `;
-        setTimeout(() => {
-          const responses = [
-            "Based on current data, that area is safe during daytime hours.",
-            "Legal restrictions may apply. Check the Legal Intelligence panel for details.",
-            "Emergency services are available 24/7. Call 112 for immediate assistance.",
-            "Cultural norms suggest conservative dress in this region.",
-            "The STS-SRI index shows moderate risk. Exercise caution.",
-            "Recent incidents have been reported. Stay vigilant.",
-            "Safe routes are available. Check the Emergency Services panel."
-          ];
-          const response = responses[Math.floor(Math.random() * responses.length)];
-          chatArea.innerHTML = `
-            <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
-            <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: ${response}</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
-          `;
-          showToast('info', `🤖 ${response}`);
-        }, 1000);
-        input.value = '';
-      } else {
-        showToast('warning', '✏️ Please enter a message');
-      }
-    };
-
-    // ===== NEW: TAB SWITCHING =====
+    // ================================================================
+    // TAB SWITCHING
+    // ================================================================
     window.switchTab = function(el) {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       el.classList.add('active');
       showToast('info', `📍 ${el.textContent.trim()} view`);
     };
 
-    // ===== NEW: LEGAL DETAIL TOGGLE =====
+    // ================================================================
+    // LEGAL DETAIL TOGGLE
+    // ================================================================
     window.toggleDetail = function(el) {
       const detail = el.nextElementSibling;
       if (detail && detail.classList && detail.classList.contains('legal-detail')) {
         detail.classList.toggle('active');
       } else {
-        const parent = el.closest('.panel');
-        if (parent) {
-          const detailDiv = document.createElement('div');
-          detailDiv.className = 'legal-detail active';
-          const details = {
-            'Criminal Law': 'Petty theft common in tourist areas. Violent crime rare. Always carry ID.',
-            'Administrative Law': 'ID required for all adults. Strict drug laws. Fines for littering.',
-            'Immigration Rules': 'Visa-free for 90 days. Passport valid 6 months. Registration required.',
-            'Customs Regulations': 'Strict import/export rules. Declare valuables. Restricted items list.',
-            'Alcohol Regulations': '18+ legal. Public drinking restricted. No sale after 10 PM.',
-            'Cultural Norms': 'Conservative dress in religious sites. Respect local traditions.',
-            'Photography Restrictions': 'Allowed in public spaces. No photos of military/strategic sites.',
-            'LGBTQ+ Status': 'Severe restrictions in some regions. Exercise extreme caution. Avoid PDAs.',
-            "Women's Rights": 'Equal rights in law, but social norms vary. Dress code advised.',
-            'Public Conduct': 'Respectful behaviour expected. No public intoxication. Fines apply.'
-          };
-          const label = el.querySelector('.label')?.textContent?.trim() || el.textContent.trim();
-          detailDiv.textContent = details[label] || 'No additional information available.';
-          el.after(detailDiv);
-        }
+        const detailDiv = document.createElement('div');
+        detailDiv.className = 'legal-detail active';
+        const details = {
+          'Criminal Law': 'Petty theft common in tourist areas. Violent crime rare. Always carry ID.',
+          'Administrative Law': 'ID required for all adults. Strict drug laws. Fines for littering.',
+          'Immigration Rules': 'Visa-free for 90 days. Passport valid 6 months. Registration required.',
+          'Customs Regulations': 'Strict import/export rules. Declare valuables. Restricted items list.',
+          'Alcohol Regulations': '18+ legal. Public drinking restricted. No sale after 10 PM.',
+          'Cultural Norms': 'Conservative dress in religious sites. Respect local traditions.',
+          'Photography Restrictions': 'Allowed in public spaces. No photos of military/strategic sites.',
+          'LGBTQ+ Status': 'Severe restrictions in some regions. Exercise extreme caution. Avoid PDAs.',
+          "Women's Rights": 'Equal rights in law, but social norms vary. Dress code advised.',
+          'Public Conduct': 'Respectful behaviour expected. No public intoxication. Fines apply.'
+        };
+        const label = el.textContent.trim().replace(/[A-Z]/g, '').trim() || el.textContent.trim();
+        const key = Object.keys(details).find(k => label.includes(k)) || label;
+        detailDiv.textContent = details[key] || 'No additional information available.';
+        el.after(detailDiv);
       }
     };
 
-    // ===== NEW: EMERGENCY CALL =====
+    // ================================================================
+    // EMERGENCY CALL
+    // ================================================================
     window.callEmergency = function(name, number) {
       showToast('warning', `📞 Calling ${name} at ${number}...`);
       setTimeout(() => {
-        showToast('success', `✅ ${name} notified. Help is on the way.`);
+        showToast('success', `✅ ${name} notified. Assistance is on the way.`);
       }, 1500);
     };
 
-    // ===== NEW: SOS ALERT =====
+    // ================================================================
+    // SOS ALERT
+    // ================================================================
     window.sosAlert = function() {
       showToast('error', '🚨 SOS! Emergency services alerted...');
       setTimeout(() => {
-        showToast('success', '🆘 Emergency team dispatched. Your location shared.');
+        showToast('success', '🆘 Emergency team dispatched. Your location has been shared.');
       }, 1500);
     };
 
-    // ===== NEW: AI FUNCTIONS =====
+    // ================================================================
+    // AI FUNCTIONS
+    // ================================================================
     window.refreshAI = function() {
-      showToast('success', '🧠 AI refreshed');
+      showToast('success', '🧠 AI intelligence refreshed');
       const aiMsg = document.getElementById('aiMessage');
       if (aiMsg) {
         const msgs = [
@@ -1487,11 +1559,49 @@
     };
 
     window.openAIChat = function() {
-      showToast('info', '💬 AI Chat opened');
+      showToast('info', '💬 AI Chat interface opened');
       document.getElementById('chatInput')?.focus();
     };
 
-    // ===== NEW: SUBSCRIBE =====
+    // ================================================================
+    // CHAT HANDLER
+    // ================================================================
+    window.handleChat = function() {
+      const input = document.getElementById('chatInput');
+      if (input && input.value.trim()) {
+        const msg = input.value.trim();
+        const chatArea = document.getElementById('chatArea');
+        chatArea.innerHTML = `
+          <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
+          <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: Processing your request...</div>
+        `;
+        setTimeout(() => {
+          const responses = [
+            "Based on current data, that area is safe during daytime hours.",
+            "Legal restrictions may apply. Consult the Legal Intelligence panel for details.",
+            "Emergency services are available 24/7. Call 112 for immediate assistance.",
+            "Cultural norms suggest conservative dress in this region.",
+            "The STS-SRI index shows moderate risk. Exercise caution.",
+            "Recent incidents have been reported. Stay vigilant.",
+            "Safe routes are available. Check the Emergency Services panel for guidance."
+          ];
+          const response = responses[Math.floor(Math.random() * responses.length)];
+          chatArea.innerHTML = `
+            <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
+            <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: ${response}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
+          `;
+          showToast('info', `🤖 ${response}`);
+        }, 1000);
+        input.value = '';
+      } else {
+        showToast('warning', '✏️ Please enter a message');
+      }
+    };
+
+    // ================================================================
+    // SUBSCRIBE
+    // ================================================================
     window.subscribe = function() {
       const email = document.getElementById('subscribeEmail');
       if (email && email.value.trim()) {
@@ -1502,7 +1612,9 @@
       }
     };
 
-    // ===== NEW: MIXER FUNCTIONS =====
+    // ================================================================
+    // MIXER FUNCTIONS
+    // ================================================================
     window.convertBinary = function() {
       const input = document.getElementById('binaryInput');
       const val = input.value.trim();
@@ -1560,11 +1672,20 @@
 
     window.exportJSON = function() {
       const data = {
+        version: APP_STATE.version,
         timestamp: new Date().toISOString(),
         binary: document.getElementById('binaryInput')?.value || '',
         ternary: document.getElementById('ternaryOutput')?.textContent || '',
         smart: document.getElementById('smartOutput')?.textContent || '',
-        history: document.getElementById('historyLog')?.textContent || ''
+        history: document.getElementById('historyLog')?.textContent || '',
+        stats: {
+          conversions: APP_STATE.convCount,
+          t2b: APP_STATE.tbCount,
+          b2t: APP_STATE.btCount,
+          filtered: APP_STATE.filteredCount,
+          errors: APP_STATE.errorCount,
+          history: APP_STATE.historyCount
+        }
       };
       const json = JSON.stringify(data, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
@@ -1599,17 +1720,41 @@
       const el = document.getElementById(id);
       if (el) {
         const current = parseInt(el.textContent) || 0;
-        el.textContent = current + 1;
+        const newVal = current + 1;
+        el.textContent = newVal;
+        APP_STATE[id] = newVal;
+        // Flash animation
+        el.classList.remove('counter-flash');
+        void el.offsetWidth;
+        el.classList.add('counter-flash');
       }
     }
 
-    // ===== GAUGE ANIMATION =====
+    // Add CSS for counter flash
+    const style = document.createElement('style');
+    style.textContent = `
+      .counter-flash {
+        animation: flash 0.4s ease;
+      }
+      @keyframes flash {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); color: var(--gold); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // ================================================================
+    // GAUGE ANIMATION
+    // ================================================================
     setTimeout(() => {
       const gauge = document.getElementById('sriGauge');
       if (gauge) gauge.style.width = '78%';
     }, 500);
 
-    // ===== COUNTER ANIMATION =====
+    // ================================================================
+    // COUNTER ANIMATION
+    // ================================================================
     function animateCounter(element, target, duration = 1500) {
       if (!element) return;
       const start = 0;
@@ -1629,7 +1774,9 @@
       if (counter) animateCounter(counter, 187, 2000);
     }, 300);
 
-    // ===== CHART.JS =====
+    // ================================================================
+    // CHART.JS
+    // ================================================================
     document.addEventListener('DOMContentLoaded', function() {
       const ctx = document.getElementById('sriChart');
       if (!ctx) return;
@@ -1662,11 +1809,15 @@
       });
     });
 
-    // ===== AUTO TOASTS =====
-    setTimeout(() => showToast('info', '🌐 GIS STS v5.0 loaded · System active'), 800);
+    // ================================================================
+    // AUTO TOASTS
+    // ================================================================
+    setTimeout(() => showToast('info', '🌐 GIS STS v6.0 loaded · System active'), 800);
     setTimeout(() => showToast('success', '📡 Satellite link established'), 2500);
 
-    // ===== LIVE DOTS PULSE REFRESH =====
+    // ================================================================
+    // LIVE DOTS PULSE REFRESH
+    // ================================================================
     setInterval(() => {
       document.querySelectorAll('.live-dot, .pulse').forEach(dot => {
         dot.style.animation = 'none';
@@ -1674,7 +1825,9 @@
       });
     }, 3000);
 
-    // ===== RANDOM CONNECTION STATUS FLIP =====
+    // ================================================================
+    // RANDOM CONNECTION STATUS FLIP
+    // ================================================================
     setInterval(() => {
       const items = document.querySelectorAll('.conn-item');
       if (items.length) {
@@ -1697,7 +1850,9 @@
       }
     }, 7000);
 
-    // ===== NEWS TICKER CONTROLS =====
+    // ================================================================
+    // NEWS TICKER CONTROLS
+    // ================================================================
     let tickerPaused = false;
     const tickerWrapper = document.getElementById('tickerWrapper');
     const pauseBtn = document.getElementById('tickerPauseBtn');
@@ -1730,9 +1885,9 @@
       showToast('info', '🔄 News ticker reset');
     };
 
-    // ============================================================
-    // THREE.JS GLOBE SCENE (with overlay)
-    // ============================================================
+    // ================================================================
+    // THREE.JS GLOBE SCENE
+    // ================================================================
     function initGlobe() {
       const container = document.getElementById('scene-container');
       
@@ -2049,7 +2204,6 @@
 
           showToast('info', `📍 ${randomCountry} — ${latStr}, ${lngStr} ${risk}`);
           
-          // Update AI message
           const aiMsg = document.getElementById('aiMessage');
           if (aiMsg) {
             aiMsg.innerHTML = `📍 ${randomCountry} selected. Current risk: ${risk} · Click again for details.`;
@@ -2067,8 +2221,11 @@
       initGlobe();
     }, 600);
 
-    console.log('🚀 GIS STS v5.0 — Enterprise Geospatial Safety & Legal Intelligence');
-    console.log('✨ New: Enhanced AI, Mixer functions, Emergency calls, Tab switching');
+    console.log(`🚀 GIS STS v${APP_STATE.version} — Enterprise Geospatial Safety & Legal Intelligence`);
+    console.log('✨ New: Enhanced UX, Tooltips, Counter animations, Improved responsiveness');
+    console.log('🔷 Binary-Ternary Mixer v3.0 — Active');
+    console.log('🌍 Click any country on the globe to simulate selection');
+    console.log('🔄 Drag to rotate · Scroll to zoom · F for fullscreen');
   })();
 </script>
 </body>
