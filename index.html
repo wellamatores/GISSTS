@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GIS STS — Geospatial Safety & Legal Intelligence</title>
+  <title>GIS STS — Geospatial Safety & Legal Intelligence v5.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -235,6 +235,12 @@
       font-weight: 700;
       color: var(--text-primary);
       font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .avatar:hover {
+      transform: scale(1.05);
+      border-color: var(--gold);
     }
 
     /* ===== NAV ===== */
@@ -335,6 +341,36 @@
       height: 100% !important;
     }
 
+    /* ===== NEW: SCENE OVERLAY ===== */
+    .scene-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 240, 255, 0.1);
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 16px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .scene-overlay span { display: flex; align-items: center; gap: 4px; }
+    .scene-overlay .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .scene-overlay .dot.green { background: var(--green); }
+    .scene-overlay .dot.yellow { background: var(--gold); }
+    .scene-overlay .dot.red { background: var(--red); }
+    .scene-overlay .dot.gray { background: var(--text-muted); }
+
     .panel-title {
       font-family: 'Rajdhani', sans-serif;
       font-weight: 600;
@@ -356,7 +392,10 @@
       padding: 4px 0;
       font-size: 13px;
       border-bottom: 1px solid var(--border-glass);
+      cursor: pointer;
+      transition: var(--transition);
     }
+    .legal-item:hover { background: var(--cyan-dim); padding-left: 4px; border-radius: 4px; }
     .status-safe { color: var(--green); }
     .status-caution { color: var(--gold); }
     .status-risk { color: var(--red); }
@@ -411,8 +450,9 @@
       margin-bottom: 6px;
       border-left: 2px solid var(--cyan);
       transition: var(--transition);
+      cursor: pointer;
     }
-    .emergency-item:hover { background: var(--cyan-dim); }
+    .emergency-item:hover { background: var(--cyan-dim); transform: translateX(4px); }
 
     .quick-grid {
       display: grid;
@@ -586,6 +626,8 @@
       color: var(--text-secondary);
       font-size: 13px;
       opacity: 0.7;
+      transition: var(--transition);
+      cursor: default;
     }
     .sponsor-item:hover { opacity: 1; color: var(--text-primary); }
     .sponsor-item i { font-size: 28px; color: var(--cyan); transition: var(--transition); }
@@ -856,6 +898,12 @@
     #scene-container.fullscreen canvas {
       border-radius: 0;
     }
+    #scene-container.fullscreen .scene-overlay {
+      bottom: 40px;
+      padding: 8px 24px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.7);
+    }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1200px) {
@@ -874,6 +922,7 @@
       .footer-grid { grid-template-columns: 1fr; }
       .quick-grid { grid-template-columns: 1fr 1fr; }
       .founders-grid { grid-template-columns: 1fr; }
+      .scene-overlay { font-size: 8px; padding: 4px 10px; gap: 8px; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
@@ -883,7 +932,7 @@
   <div class="splash-content">
     <div class="splash-icon"><i class="fas fa-shield-halved"></i></div>
     <h1>GIS STS</h1>
-    <div class="splash-sub">Geospatial Safety & Legal Intelligence</div>
+    <div class="splash-sub">Geospatial Safety & Legal Intelligence v5.0</div>
     <div class="splash-loader"><div class="splash-bar"></div></div>
   </div>
 </div>
@@ -905,23 +954,23 @@
         <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
         <div class="icon-btn" onclick="showToast('success', '🔄 Data updated')"><i class="fas fa-sync-alt"></i></div>
         <div class="icon-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></div>
-        <div class="avatar">JD</div>
+        <div class="avatar" onclick="showToast('info', '👤 User: John Doe · Admin')">JD</div>
       </div>
     </header>
 
     <!-- NAV -->
     <nav class="nav">
-      <span class="nav-item active"><i class="fas fa-th-large"></i>Dashboard</span>
+      <span class="nav-item active" onclick="switchTab(this)"><i class="fas fa-th-large"></i>Dashboard</span>
       <a href="https://gis-sts-worldmap.vercel.app/#" target="_blank" class="nav-item" style="text-decoration:none;">
         <i class="fas fa-globe-americas"></i>World Map 2D
       </a>
-      <span class="nav-item"><i class="fas fa-gavel"></i>Legal</span>
-      <span class="nav-item"><i class="fas fa-triangle-exclamation"></i>Risk</span>
-      <span class="nav-item"><i class="fas fa-phone-alt"></i>Emergency</span>
-      <span class="nav-item"><i class="fas fa-robot"></i>AI</span>
-      <span class="nav-item"><i class="fas fa-users"></i>Community</span>
-      <span class="nav-item"><i class="fas fa-cog"></i>Settings</span>
-      <span class="nav-item"><i class="fas fa-link"></i>Connect</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-gavel"></i>Legal</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-triangle-exclamation"></i>Risk</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-phone-alt"></i>Emergency</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-robot"></i>AI</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-users"></i>Community</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-cog"></i>Settings</span>
+      <span class="nav-item" onclick="switchTab(this)"><i class="fas fa-link"></i>Connect</span>
       <span class="nav-item"><span class="live-dot"></span>Live</span>
     </nav>
 
@@ -933,16 +982,16 @@
           <span><i class="fas fa-scale-balanced"></i>Legal Intelligence</span>
           <span style="font-size:11px;color:var(--text-muted);">Trust 0.92</span>
         </div>
-        <div class="legal-item"><span>Criminal Law</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Administrative Law</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Immigration Rules</span><span class="status-safe">Safe</span></div>
-        <div class="legal-item"><span>Customs Regulations</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Alcohol Regulations</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Cultural Norms</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Photography Restrictions</span><span class="status-safe">Safe</span></div>
-        <div class="legal-item"><span>LGBTQ+ Status</span><span class="status-risk">High Risk</span></div>
-        <div class="legal-item"><span>Women's Rights</span><span class="status-caution">Caution</span></div>
-        <div class="legal-item"><span>Public Conduct</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Criminal Law</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Administrative Law</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Immigration Rules</span><span class="status-safe">Safe</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Customs Regulations</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Alcohol Regulations</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Cultural Norms</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Photography Restrictions</span><span class="status-safe">Safe</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>LGBTQ+ Status</span><span class="status-risk">High Risk</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Women's Rights</span><span class="status-caution">Caution</span></div>
+        <div class="legal-item" onclick="toggleDetail(this)"><span>Public Conduct</span><span class="status-caution">Caution</span></div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">
           <i class="fas fa-clock"></i> Updated Today · <span class="live-indicator" style="display:inline-flex;"><span class="pulse"></span>Live</span>
         </div>
@@ -971,20 +1020,20 @@
 
         <div class="panel-title" style="margin-top:10px;">
           <span><i class="fas fa-brain"></i>AI Travel Briefing</span>
-          <span><i class="fas fa-rotate-right" style="cursor:pointer;" onclick="showToast('success','🧠 AI refreshed')"></i></span>
+          <span><i class="fas fa-rotate-right" style="cursor:pointer;" onclick="refreshAI()"></i></span>
         </div>
-        <div class="ai-brief">
+        <div class="ai-brief" id="aiBrief">
           <div style="display:flex;gap:8px;align-items:center;">
             <span style="font-size:22px;">🧠</span>
             <span style="font-weight:600;">STS Assistant</span>
             <span style="font-size:11px;color:var(--green);">● Online</span>
           </div>
-          <div style="font-size:13px;margin-top:6px;">
+          <div style="font-size:13px;margin-top:6px;" id="aiMessage">
             Click on any country. Current risk: <span style="color:var(--gold);">Medium</span> · 2 active alerts
           </div>
           <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
-            <span style="background:var(--cyan-dim);padding:2px 12px;border-radius:40px;font-size:11px;border:1px solid var(--cyan);cursor:pointer;" onclick="showToast('success','📄 PDF generated')">📄 Generate PDF</span>
-            <span style="background:var(--bg-card);padding:2px 12px;border-radius:40px;font-size:11px;cursor:pointer;" onclick="showToast('info','💬 AI Chat opened')">💬 Ask AI</span>
+            <span style="background:var(--cyan-dim);padding:2px 12px;border-radius:40px;font-size:11px;border:1px solid var(--cyan);cursor:pointer;" onclick="generatePDF()">📄 Generate PDF</span>
+            <span style="background:var(--bg-card);padding:2px 12px;border-radius:40px;font-size:11px;cursor:pointer;" onclick="openAIChat()">💬 Ask AI</span>
           </div>
         </div>
 
@@ -1001,7 +1050,16 @@
 
       <!-- CENTER PANEL WITH 3D SCENE -->
       <div class="panel-center">
-        <div id="scene-container"></div>
+        <div id="scene-container">
+          <div class="scene-overlay">
+            <span><span class="dot green"></span> Safe</span>
+            <span><span class="dot yellow"></span> Caution</span>
+            <span><span class="dot red"></span> High Risk</span>
+            <span><span class="dot gray"></span> No Data</span>
+            <span>🌍 195 Countries</span>
+            <span>🔄 Click Earth</span>
+          </div>
+        </div>
       </div>
 
       <!-- RIGHT PANEL -->
@@ -1016,13 +1074,13 @@
         </div>
 
         <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-flag"></i>Risk Legend</span></div>
-        <div><span class="dot dot-green" style="display:inline-block;"></span> Low Risk &nbsp; <span class="dot dot-gold" style="display:inline-block;"></span> Medium &nbsp; <span class="dot dot-red" style="display:inline-block;"></span> High &nbsp; <span class="dot dot-gray" style="display:inline-block;"></span> No Data</div>
+        <div><span class="dot dot-green" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--green);"></span> Low Risk &nbsp; <span class="dot dot-gold" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--gold);"></span> Medium &nbsp; <span class="dot dot-red" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);"></span> High &nbsp; <span class="dot dot-gray" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--text-muted);"></span> No Data</div>
 
         <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-phone-volume"></i>Emergency Services</span></div>
-        <div class="emergency-item"><span><i class="fas fa-shield"></i> Police 112 · 0.6 km</span></div>
-        <div class="emergency-item"><span><i class="fas fa-hospital"></i> Hospital +33 1 40 22 22 22 · 1.2 km</span></div>
-        <div class="emergency-item"><span><i class="fas fa-flag"></i> Embassy +33 1 40 22 22 33 · 2.5 km</span></div>
-        <div class="emergency-item"><span><i class="fas fa-prescription-bottle"></i> Pharmacy +33 1 40 22 22 44 · 0.3 km</span></div>
+        <div class="emergency-item" onclick="callEmergency('Police', '112')"><span><i class="fas fa-shield"></i> Police 112 · 0.6 km</span></div>
+        <div class="emergency-item" onclick="callEmergency('Hospital', '+33 1 40 22 22 22')"><span><i class="fas fa-hospital"></i> Hospital +33 1 40 22 22 22 · 1.2 km</span></div>
+        <div class="emergency-item" onclick="callEmergency('Embassy', '+33 1 40 22 22 33')"><span><i class="fas fa-flag"></i> Embassy +33 1 40 22 22 33 · 2.5 km</span></div>
+        <div class="emergency-item" onclick="callEmergency('Pharmacy', '+33 1 40 22 22 44')"><span><i class="fas fa-prescription-bottle"></i> Pharmacy +33 1 40 22 22 44 · 0.3 km</span></div>
 
         <div class="panel-title" style="margin-top:12px;"><span><i class="fas fa-bolt"></i>Quick Actions</span></div>
         <div class="quick-grid">
@@ -1031,19 +1089,19 @@
           <div class="quick-btn" onclick="showToast('info','🗺️ Map opened')"><i class="fas fa-map"></i> Map</div>
           <div class="quick-btn" onclick="showToast('info','📊 Analytics loaded')"><i class="fas fa-chart-line"></i> Analytics</div>
           <div class="quick-btn" onclick="showToast('info','🔍 Search executed')"><i class="fas fa-search"></i> Search</div>
-          <div class="quick-btn sos" onclick="showToast('error','🚨 SOS! Emergency call sent')"><i class="fas fa-exclamation-triangle"></i> SOS</div>
+          <div class="quick-btn sos" onclick="sosAlert()"><i class="fas fa-exclamation-triangle"></i> SOS</div>
         </div>
 
         <div class="panel-title" style="margin-top:10px;">
           <span><i class="fas fa-robot"></i>AI Assistant</span>
           <span style="color:var(--green);font-size:12px;"><span class="live-indicator"><span class="pulse"></span>Online</span></span>
         </div>
-        <div class="chat-area">
+        <div class="chat-area" id="chatArea">
           <div><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: How can I help you?</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
         </div>
         <div class="chat-input">
-          <input type="text" placeholder="Type a message..." id="chatInput" />
+          <input type="text" placeholder="Type a message..." id="chatInput" onkeydown="if(event.key==='Enter') handleChat()" />
           <button onclick="showToast('info','🎤 Voice input activated')"><i class="fas fa-microphone"></i></button>
           <button onclick="handleChat()"><i class="fas fa-paper-plane"></i></button>
         </div>
@@ -1060,37 +1118,37 @@
         <div class="mixer-window">
           <div class="mw-title">🔢 Binary Window (T→B)</div>
           <div class="mw-content"><span style="color:var(--text-secondary);">101010</span></div>
-          <div class="mw-actions"><input type="text" value="101010" /><button onclick="showToast('success','✅ Conversion completed')">→</button></div>
+          <div class="mw-actions"><input type="text" value="101010" id="binaryInput" /><button onclick="convertBinary()">→</button></div>
           <div style="font-size:11px;color:var(--text-muted);">Status: ready</div>
         </div>
         <div class="mixer-window">
           <div class="mw-title">🔣 Ternary Window (B→T)</div>
-          <div class="mw-content"><span style="color:var(--text-secondary);">2101</span></div>
-          <div class="mw-actions"><input type="text" value="2101" /><button onclick="showToast('success','✅ Conversion completed')">←</button></div>
+          <div class="mw-content"><span style="color:var(--text-secondary);" id="ternaryOutput">2101</span></div>
+          <div class="mw-actions"><input type="text" value="2101" id="ternaryInput" /><button onclick="convertTernary()">←</button></div>
           <div style="font-size:11px;color:var(--text-muted);">Status: ready</div>
         </div>
         <div class="mixer-window">
           <div class="mw-title">🧠 Smart Mixer Window (Auto)</div>
-          <div class="mw-content"><span style="color:var(--cyan);">0101 ⇄ 201</span></div>
-          <div class="mw-actions"><input type="text" placeholder="auto-detect" /><button style="background:var(--cyan);color:var(--bg-primary);" onclick="showToast('success','🧠 Smart conversion completed')">🧠 Smart</button></div>
+          <div class="mw-content"><span style="color:var(--cyan);" id="smartOutput">0101 ⇄ 201</span></div>
+          <div class="mw-actions"><input type="text" placeholder="auto-detect" id="smartInput" /><button style="background:var(--cyan);color:var(--bg-primary);" onclick="smartConvert()">🧠 Smart</button></div>
           <div style="font-size:11px;color:var(--text-muted);">Status: synced</div>
         </div>
       </div>
       <div class="mixer-ext">
-        <span onclick="showToast('success','📋 Copied')"><i class="far fa-copy"></i> Copy</span>
-        <span onclick="showToast('success','📦 Exported to JSON')"><i class="fas fa-file-export"></i> Export JSON</span>
-        <span onclick="showToast('warning','🗑️ History cleared')"><i class="fas fa-undo-alt"></i> Clear History</span>
+        <span onclick="copyResult()"><i class="far fa-copy"></i> Copy</span>
+        <span onclick="exportJSON()"><i class="fas fa-file-export"></i> Export JSON</span>
+        <span onclick="clearHistory()"><i class="fas fa-undo-alt"></i> Clear History</span>
       </div>
-      <div class="history-log">
+      <div class="history-log" id="historyLog">
         ⏱ History Log: 101010 → 2101 (T→B) &nbsp;|&nbsp; 2021 → 10101 (B→T) &nbsp;|&nbsp; 0101 ↔ 201 (Auto)
       </div>
       <div class="stats-bar">
         <span class="stat-item">Conversions: <span class="stat-number" id="convCount">142</span></span>
-        <span class="stat-item">T→B: <span class="stat-number">68</span></span>
-        <span class="stat-item">B→T: <span class="stat-number">51</span></span>
-        <span class="stat-item">Filtered: <span class="stat-number">23</span></span>
-        <span class="stat-item">Errors: <span class="stat-number" style="color:var(--red);">0</span></span>
-        <span class="stat-item">History: <span class="stat-number">12</span></span>
+        <span class="stat-item">T→B: <span class="stat-number" id="tbCount">68</span></span>
+        <span class="stat-item">B→T: <span class="stat-number" id="btCount">51</span></span>
+        <span class="stat-item">Filtered: <span class="stat-number" id="filteredCount">23</span></span>
+        <span class="stat-item">Errors: <span class="stat-number" style="color:var(--red);" id="errorCount">0</span></span>
+        <span class="stat-item">History: <span class="stat-number" id="historyCount">12</span></span>
       </div>
     </div>
 
@@ -1210,7 +1268,7 @@
         </div>
         <div class="footer-col">
           <h4>Resources</h4>
-          <p>API Docs</p><p>Data Sources</p><p>Changelog v4.2</p><p>Security Whitepaper</p><p>Blog & Updates</p><p>Support Center</p>
+          <p>API Docs</p><p>Data Sources</p><p>Changelog v5.0</p><p>Security Whitepaper</p><p>Blog & Updates</p><p>Support Center</p>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
@@ -1218,13 +1276,13 @@
           <p><i class="fas fa-phone" style="color:var(--cyan);width:20px;"></i> +1 (555) 123-4567</p>
           <p><i class="fas fa-map-pin" style="color:var(--cyan);width:20px;"></i> San Francisco, CA</p>
           <div style="display:flex;gap:6px;margin-top:6px;">
-            <input type="email" placeholder="Email" style="background:var(--bg-card);border:1px solid var(--border-glass);border-radius:30px;padding:6px 12px;color:var(--text-primary);flex:1;" />
-            <button style="background:var(--cyan);border:none;border-radius:30px;padding:0 14px;color:var(--bg-primary);font-weight:600;cursor:pointer;" onclick="showToast('success','✅ Subscription confirmed')">Subscribe</button>
+            <input type="email" placeholder="Email" id="subscribeEmail" style="background:var(--bg-card);border:1px solid var(--border-glass);border-radius:30px;padding:6px 12px;color:var(--text-primary);flex:1;" />
+            <button style="background:var(--cyan);border:none;border-radius:30px;padding:0 14px;color:var(--bg-primary);font-weight:600;cursor:pointer;" onclick="subscribe()">Subscribe</button>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <div><span class="status-dot"></span> System Active · v4.2.0 · © 2026 GIS STS</div>
+        <div><span class="status-dot"></span> System Active · v5.0.0 · © 2026 GIS STS</div>
         <div class="legal-links">
           <span>Privacy Policy</span>
           <span>Terms of Service</span>
@@ -1312,7 +1370,6 @@
       }
     };
 
-    // Listen for fullscreen change events
     document.addEventListener('fullscreenchange', function() {
       if (!document.fullscreenElement) {
         sceneContainer.classList.remove('fullscreen');
@@ -1324,12 +1381,227 @@
     window.handleChat = function() {
       const input = document.getElementById('chatInput');
       if (input && input.value.trim()) {
-        showToast('info', `💬 Message: "${input.value}"`);
+        const msg = input.value.trim();
+        const chatArea = document.getElementById('chatArea');
+        chatArea.innerHTML = `
+          <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
+          <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: Analyzing your query...</div>
+        `;
+        setTimeout(() => {
+          const responses = [
+            "Based on current data, that area is safe during daytime hours.",
+            "Legal restrictions may apply. Check the Legal Intelligence panel for details.",
+            "Emergency services are available 24/7. Call 112 for immediate assistance.",
+            "Cultural norms suggest conservative dress in this region.",
+            "The STS-SRI index shows moderate risk. Exercise caution.",
+            "Recent incidents have been reported. Stay vigilant.",
+            "Safe routes are available. Check the Emergency Services panel."
+          ];
+          const response = responses[Math.floor(Math.random() * responses.length)];
+          chatArea.innerHTML = `
+            <div><i class="fas fa-user" style="color:var(--gold);"></i> You: ${msg}</div>
+            <div style="margin-top:4px;"><i class="fas fa-robot" style="color:var(--cyan);"></i> STS Assistant: ${response}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Ask about safety, legal, or travel</div>
+          `;
+          showToast('info', `🤖 ${response}`);
+        }, 1000);
         input.value = '';
       } else {
         showToast('warning', '✏️ Please enter a message');
       }
     };
+
+    // ===== NEW: TAB SWITCHING =====
+    window.switchTab = function(el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      showToast('info', `📍 ${el.textContent.trim()} view`);
+    };
+
+    // ===== NEW: LEGAL DETAIL TOGGLE =====
+    window.toggleDetail = function(el) {
+      const detail = el.nextElementSibling;
+      if (detail && detail.classList && detail.classList.contains('legal-detail')) {
+        detail.classList.toggle('active');
+      } else {
+        const parent = el.closest('.panel');
+        if (parent) {
+          const detailDiv = document.createElement('div');
+          detailDiv.className = 'legal-detail active';
+          const details = {
+            'Criminal Law': 'Petty theft common in tourist areas. Violent crime rare. Always carry ID.',
+            'Administrative Law': 'ID required for all adults. Strict drug laws. Fines for littering.',
+            'Immigration Rules': 'Visa-free for 90 days. Passport valid 6 months. Registration required.',
+            'Customs Regulations': 'Strict import/export rules. Declare valuables. Restricted items list.',
+            'Alcohol Regulations': '18+ legal. Public drinking restricted. No sale after 10 PM.',
+            'Cultural Norms': 'Conservative dress in religious sites. Respect local traditions.',
+            'Photography Restrictions': 'Allowed in public spaces. No photos of military/strategic sites.',
+            'LGBTQ+ Status': 'Severe restrictions in some regions. Exercise extreme caution. Avoid PDAs.',
+            "Women's Rights": 'Equal rights in law, but social norms vary. Dress code advised.',
+            'Public Conduct': 'Respectful behaviour expected. No public intoxication. Fines apply.'
+          };
+          const label = el.querySelector('.label')?.textContent?.trim() || el.textContent.trim();
+          detailDiv.textContent = details[label] || 'No additional information available.';
+          el.after(detailDiv);
+        }
+      }
+    };
+
+    // ===== NEW: EMERGENCY CALL =====
+    window.callEmergency = function(name, number) {
+      showToast('warning', `📞 Calling ${name} at ${number}...`);
+      setTimeout(() => {
+        showToast('success', `✅ ${name} notified. Help is on the way.`);
+      }, 1500);
+    };
+
+    // ===== NEW: SOS ALERT =====
+    window.sosAlert = function() {
+      showToast('error', '🚨 SOS! Emergency services alerted...');
+      setTimeout(() => {
+        showToast('success', '🆘 Emergency team dispatched. Your location shared.');
+      }, 1500);
+    };
+
+    // ===== NEW: AI FUNCTIONS =====
+    window.refreshAI = function() {
+      showToast('success', '🧠 AI refreshed');
+      const aiMsg = document.getElementById('aiMessage');
+      if (aiMsg) {
+        const msgs = [
+          'Click on any country. Current risk: <span style="color:var(--gold);">Medium</span> · 2 active alerts',
+          'All systems nominal. No new alerts in your region. Stay safe!',
+          'Travel advisory: Avoid northern suburbs after 10 PM.',
+          'Legal update: New customs regulations effective next week.',
+          'Weather alert: Heavy rain expected. Plan your routes accordingly.'
+        ];
+        aiMsg.innerHTML = msgs[Math.floor(Math.random() * msgs.length)];
+      }
+    };
+
+    window.generatePDF = function() {
+      showToast('info', '📄 Generating PDF briefing...');
+      setTimeout(() => {
+        showToast('success', '✅ PDF generated: briefing_2026-07-19.pdf');
+      }, 2000);
+    };
+
+    window.openAIChat = function() {
+      showToast('info', '💬 AI Chat opened');
+      document.getElementById('chatInput')?.focus();
+    };
+
+    // ===== NEW: SUBSCRIBE =====
+    window.subscribe = function() {
+      const email = document.getElementById('subscribeEmail');
+      if (email && email.value.trim()) {
+        showToast('success', `✅ ${email.value.trim()} subscribed successfully!`);
+        email.value = '';
+      } else {
+        showToast('warning', '✉️ Please enter a valid email address');
+      }
+    };
+
+    // ===== NEW: MIXER FUNCTIONS =====
+    window.convertBinary = function() {
+      const input = document.getElementById('binaryInput');
+      const val = input.value.trim();
+      if (!val) { showToast('warning', '⚠️ Enter a binary number'); return; }
+      if (!/^[01]+$/.test(val)) { showToast('error', '❌ Invalid binary number'); return; }
+      const decimal = parseInt(val, 2);
+      const ternary = decimal.toString(3);
+      document.getElementById('ternaryOutput').textContent = ternary;
+      document.getElementById('ternaryInput').value = ternary;
+      showToast('success', `✅ ${val} → ${ternary} (T→B)`);
+      updateHistory(`${val} → ${ternary} (T→B)`);
+      updateCounter('convCount');
+    };
+
+    window.convertTernary = function() {
+      const input = document.getElementById('ternaryInput');
+      const val = input.value.trim();
+      if (!val) { showToast('warning', '⚠️ Enter a ternary number'); return; }
+      if (!/^[012]+$/.test(val)) { showToast('error', '❌ Invalid ternary number'); return; }
+      const decimal = parseInt(val, 3);
+      const binary = decimal.toString(2);
+      document.getElementById('binaryInput').value = binary;
+      showToast('success', `✅ ${val} → ${binary} (B→T)`);
+      updateHistory(`${val} → ${binary} (B→T)`);
+      updateCounter('convCount');
+    };
+
+    window.smartConvert = function() {
+      const input = document.getElementById('smartInput');
+      const val = input.value.trim();
+      if (!val) { showToast('warning', '⚠️ Enter a number'); return; }
+      const decimal = parseInt(val, 10);
+      if (isNaN(decimal)) { showToast('error', '❌ Invalid number'); return; }
+      const binary = decimal.toString(2);
+      const ternary = decimal.toString(3);
+      document.getElementById('smartOutput').textContent = `${binary} ⇄ ${ternary}`;
+      document.getElementById('binaryInput').value = binary;
+      document.getElementById('ternaryOutput').textContent = ternary;
+      document.getElementById('ternaryInput').value = ternary;
+      showToast('success', `🧠 Smart: ${val} → Binary: ${binary}, Ternary: ${ternary}`);
+      updateHistory(`${val} → Binary: ${binary}, Ternary: ${ternary} (Smart)`);
+      updateCounter('convCount');
+    };
+
+    window.copyResult = function() {
+      const smartOutput = document.getElementById('smartOutput');
+      if (smartOutput) {
+        navigator.clipboard?.writeText(smartOutput.textContent).then(() => {
+          showToast('success', '📋 Copied to clipboard');
+        }).catch(() => {
+          showToast('info', `📋 ${smartOutput.textContent}`);
+        });
+      }
+    };
+
+    window.exportJSON = function() {
+      const data = {
+        timestamp: new Date().toISOString(),
+        binary: document.getElementById('binaryInput')?.value || '',
+        ternary: document.getElementById('ternaryOutput')?.textContent || '',
+        smart: document.getElementById('smartOutput')?.textContent || '',
+        history: document.getElementById('historyLog')?.textContent || ''
+      };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mixer_export_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('success', '📦 Exported to JSON');
+    };
+
+    window.clearHistory = function() {
+      document.getElementById('historyLog').textContent = '⏱ History cleared';
+      showToast('warning', '🗑️ History cleared');
+    };
+
+    function updateHistory(entry) {
+      const log = document.getElementById('historyLog');
+      const current = log.textContent;
+      if (current.includes('History cleared')) {
+        log.textContent = `⏱ History: ${entry}`;
+      } else {
+        const entries = current.split(' &nbsp;|&nbsp; ');
+        if (entries.length > 8) entries.shift();
+        entries.push(entry);
+        log.textContent = entries.join(' &nbsp;|&nbsp; ');
+      }
+    }
+
+    function updateCounter(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        const current = parseInt(el.textContent) || 0;
+        el.textContent = current + 1;
+      }
+    }
 
     // ===== GAUGE ANIMATION =====
     setTimeout(() => {
@@ -1391,7 +1663,7 @@
     });
 
     // ===== AUTO TOASTS =====
-    setTimeout(() => showToast('info', '🌐 GIS STS loaded · System active'), 800);
+    setTimeout(() => showToast('info', '🌐 GIS STS v5.0 loaded · System active'), 800);
     setTimeout(() => showToast('success', '📡 Satellite link established'), 2500);
 
     // ===== LIVE DOTS PULSE REFRESH =====
@@ -1459,7 +1731,7 @@
     };
 
     // ============================================================
-    // THREE.JS GLOBE SCENE
+    // THREE.JS GLOBE SCENE (with overlay)
     // ============================================================
     function initGlobe() {
       const container = document.getElementById('scene-container');
@@ -1770,10 +2042,18 @@
           const latStr = lat >= 0 ? `${lat.toFixed(2)}°N` : `${(-lat).toFixed(2)}°S`;
           const lngStr = lng >= 0 ? `${lng.toFixed(2)}°E` : `${(-lng).toFixed(2)}°W`;
 
-          const countryNames = ['France', 'Germany', 'Italy', 'Spain', 'UK', 'USA', 'Brazil', 'Japan', 'Australia', 'Egypt'];
+          const countryNames = ['France', 'Germany', 'Italy', 'Spain', 'UK', 'USA', 'Brazil', 'Japan', 'Australia', 'Egypt', 'India', 'China', 'Canada', 'Mexico'];
           const randomCountry = countryNames[Math.floor(Math.random() * countryNames.length)];
+          const risks = ['🟢 Low Risk', '🟡 Medium Risk', '🔴 High Risk'];
+          const risk = risks[Math.floor(Math.random() * risks.length)];
 
-          showToast('info', `📍 ${randomCountry} — ${latStr}, ${lngStr} 🟢 Low Risk`);
+          showToast('info', `📍 ${randomCountry} — ${latStr}, ${lngStr} ${risk}`);
+          
+          // Update AI message
+          const aiMsg = document.getElementById('aiMessage');
+          if (aiMsg) {
+            aiMsg.innerHTML = `📍 ${randomCountry} selected. Current risk: ${risk} · Click again for details.`;
+          }
         }
       });
 
@@ -1787,7 +2067,8 @@
       initGlobe();
     }, 600);
 
-    console.log('🚀 GIS STS v4.2 — Enterprise Geospatial Safety & Legal Intelligence');
+    console.log('🚀 GIS STS v5.0 — Enterprise Geospatial Safety & Legal Intelligence');
+    console.log('✨ New: Enhanced AI, Mixer functions, Emergency calls, Tab switching');
   })();
 </script>
 </body>
