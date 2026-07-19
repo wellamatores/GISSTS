@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GIS STS — Geospatial Safety & Legal Intelligence v6.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -25,6 +25,8 @@
       --red: #ff4d7a;
       --gold: #ffc857;
       --green: #6fcf97;
+      --purple: #8B5CF6;
+      --purple-dim: rgba(139, 92, 246, 0.08);
       --text-primary: #eef2f9;
       --text-secondary: #9aa4c8;
       --text-muted: #5c6f92;
@@ -34,6 +36,7 @@
       --radius-lg: 20px;
       --font-heading: 'Orbitron', 'Rajdhani', sans-serif;
       --font-body: 'Inter', 'Satoshi', sans-serif;
+      --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
     }
 
     [data-theme="light"] {
@@ -165,7 +168,7 @@
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--cyan), var(--cyan-glow));
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,7 +196,7 @@
       font-weight: 500;
       font-size: 16px;
       color: var(--text-secondary);
-      border-left: 2px solid var(--cyan);
+      border-left: 2px solid var(--purple);
       padding-left: 16px;
       letter-spacing: 0.5px;
     }
@@ -254,7 +257,7 @@
     }
     .avatar:hover {
       transform: scale(1.05);
-      border-color: var(--gold);
+      border-color: var(--purple);
     }
 
     /* ===== NAV ===== */
@@ -548,33 +551,97 @@
     }
     .chat-input button:hover { background: var(--cyan); color: var(--bg-primary); }
 
-    /* ===== MIXER ===== */
-    .mixer {
+    /* ===== DECISION LOGIC CONVERTER (DLC) ===== */
+    .dlc-module {
       background: var(--bg-panel);
       backdrop-filter: blur(8px);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-glass);
       padding: 16px 18px;
       margin-top: 12px;
+      transition: var(--transition);
     }
-    .mixer-grid {
+    .dlc-module:hover { border-color: rgba(0, 240, 255, 0.2); }
+
+    .dlc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .dlc-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dlc-brand .dlc-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--bg-primary);
+    }
+    .dlc-brand .dlc-label {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .dlc-brand .dlc-label .cyan { color: var(--cyan); }
+    .dlc-brand .dlc-label .purple { color: var(--purple); }
+
+    .dlc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 14px;
     }
-    .mixer-window {
+    .dlc-window {
       background: var(--bg-card);
       border-radius: var(--radius);
       padding: 12px 14px;
       border: 1px solid var(--border-glass);
       transition: var(--transition);
     }
-    .mixer-window:hover { border-color: var(--cyan); }
-    .mixer-window .mw-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; }
-    .mixer-window .mw-content { min-height: 36px; font-size: 14px; margin: 6px 0; color: var(--text-primary); font-family: var(--font-heading); }
-    .mw-actions { display: flex; gap: 6px; margin-top: 4px; }
-    .mw-actions input {
+    .dlc-window:hover { border-color: var(--cyan); transform: translateY(-2px); }
+    .dlc-window .win-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dlc-window .win-title .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dlc-window .win-title .dot.binary { background: var(--cyan); }
+    .dlc-window .win-title .dot.ternary { background: var(--purple); }
+    .dlc-window .win-title .dot.smart { background: var(--gold); }
+    .dlc-window .win-content {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-primary);
+      min-height: 36px;
+      margin: 6px 0;
+      padding: 4px 0;
+    }
+    .dlc-window .win-input {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .dlc-window .win-input input {
       flex: 1;
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
@@ -584,8 +651,8 @@
       font-size: 11px;
       font-family: var(--font-body);
     }
-    .mw-actions input:focus { outline: none; border-color: var(--cyan); }
-    .mw-actions button {
+    .dlc-window .win-input input:focus { outline: none; border-color: var(--cyan); }
+    .dlc-window .win-input button {
       background: var(--cyan-dim);
       border: 1px solid var(--cyan);
       color: var(--cyan);
@@ -596,21 +663,41 @@
       transition: var(--transition);
       font-family: var(--font-body);
     }
-    .mw-actions button:hover { background: var(--cyan); color: var(--bg-primary); }
+    .dlc-window .win-input button:hover { background: var(--cyan); color: var(--bg-primary); }
+    .dlc-window .win-input button.accent {
+      background: var(--purple-dim);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+    .dlc-window .win-input button.accent:hover { background: var(--purple); color: var(--bg-primary); }
+    .dlc-window .win-input button.smart {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .dlc-window .win-input button.smart:hover { background: var(--gold); color: var(--bg-primary); }
+    .dlc-window .win-status {
+      font-size: 8px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+      padding-top: 3px;
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+    }
 
-    .mixer-ext {
+    .dlc-ext {
       display: flex;
-      gap: 20px;
+      gap: 18px;
       flex-wrap: wrap;
       margin: 10px 0 4px 0;
-      font-size: 12px;
+      font-size: 11px;
       align-items: center;
     }
-    .mixer-ext span { color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
-    .mixer-ext span:hover { color: var(--cyan); }
-    .mixer-ext i { margin-right: 4px; }
+    .dlc-ext span { color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
+    .dlc-ext span:hover { color: var(--cyan); }
+    .dlc-ext i { margin-right: 4px; }
 
-    .history-log {
+    .dlc-history {
       background: var(--bg-card);
       border-radius: var(--radius);
       padding: 6px 12px;
@@ -621,8 +708,7 @@
       border: 1px solid var(--border-glass);
       font-family: var(--font-body);
     }
-
-    .stats-bar {
+    .dlc-stats {
       display: flex;
       gap: 18px;
       font-size: 11px;
@@ -630,7 +716,114 @@
       margin-top: 4px;
       flex-wrap: wrap;
     }
-    .stats-bar .stat-number { color: var(--cyan); font-weight: 600; font-family: var(--font-heading); }
+    .dlc-stats .stat-number {
+      color: var(--cyan);
+      font-weight: 600;
+      font-family: var(--font-heading);
+    }
+
+    /* ===== DCM MODULE ===== */
+    .dcm-module {
+      background: var(--bg-panel);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(139, 92, 246, 0.12);
+      padding: 16px 18px;
+      margin-top: 12px;
+      transition: var(--transition);
+    }
+    .dcm-module:hover { border-color: rgba(139, 92, 246, 0.25); }
+
+    .dcm-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .dcm-brand-sm {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dcm-brand-sm .dcm-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--bg-primary);
+    }
+    .dcm-brand-sm .dcm-label {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .dcm-brand-sm .dcm-label .purple { color: var(--purple); }
+    .dcm-brand-sm .dcm-label .cyan { color: var(--cyan); }
+
+    .dcm-grid-sm {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .dcm-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      border: 1px solid var(--border-glass);
+      transition: var(--transition);
+      cursor: pointer;
+      text-align: center;
+    }
+    .dcm-card:hover {
+      background: var(--purple-dim);
+      border-color: var(--purple);
+      transform: translateY(-2px);
+    }
+    .dcm-card .dcm-value {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--purple);
+    }
+    .dcm-card .dcm-value.green { color: var(--green); }
+    .dcm-card .dcm-value.gold { color: var(--gold); }
+    .dcm-card .dcm-value.red { color: var(--red); }
+    .dcm-card .dcm-label-sm {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .dcm-compass-sm {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .dcm-quadrant {
+      padding: 6px 4px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .dcm-quadrant:hover { transform: translateY(-2px); }
+    .dcm-quadrant .q-strategy { font-weight: 600; font-size: 9px; }
+    .dcm-quadrant.q1 { border-color: rgba(239, 68, 68, 0.2); color: var(--red); }
+    .dcm-quadrant.q2 { border-color: rgba(234, 179, 8, 0.2); color: var(--gold); }
+    .dcm-quadrant.q3 { border-color: rgba(34, 197, 94, 0.2); color: var(--green); }
+    .dcm-quadrant.q4 { border-color: rgba(139, 92, 246, 0.2); color: var(--purple); }
 
     /* ===== SPONSORS ===== */
     .sponsors-block {
@@ -943,35 +1136,20 @@
       background: rgba(0, 0, 0, 0.75);
     }
 
-    /* ===== NEW: TOOLTIP ===== */
-    .tooltip {
-      position: fixed;
-      background: var(--bg-panel);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-glass);
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 11px;
-      color: var(--text-primary);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 9998;
-      max-width: 200px;
-      text-align: center;
-    }
-    .tooltip.visible { opacity: 1; }
-
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1200px) {
       .columns { grid-template-columns: 280px 1fr 280px; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .founders-grid { grid-template-columns: repeat(3, 1fr); }
+      .dlc-grid { grid-template-columns: 1fr 1fr; }
+      .dcm-grid-sm { grid-template-columns: 1fr 1fr; }
+      .dcm-compass-sm { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 992px) {
       .columns { grid-template-columns: 1fr; }
-      .mixer-grid { grid-template-columns: 1fr; }
+      .dlc-grid { grid-template-columns: 1fr; }
       .founders-grid { grid-template-columns: repeat(2, 1fr); }
+      .dcm-grid-sm { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
       .header { flex-direction: column; align-items: stretch; }
@@ -980,15 +1158,13 @@
       .quick-grid { grid-template-columns: 1fr 1fr; }
       .founders-grid { grid-template-columns: 1fr; }
       .scene-overlay { font-size: 8px; padding: 4px 10px; gap: 6px; flex-wrap: wrap; justify-content: center; }
+      .dlc-grid { grid-template-columns: 1fr; }
+      .dcm-compass-sm { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-
-<!-- ===== TOOLTIP ===== -->
-<div class="tooltip" id="tooltip"></div>
-
-<!-- ===== SPLASH SCREEN ===== -->
+<!-- SPLASH SCREEN -->
 <div class="splash-overlay" id="splashOverlay">
   <div class="splash-content">
     <div class="splash-icon"><i class="fas fa-shield-halved"></i></div>
@@ -1009,7 +1185,7 @@
           <div class="subtitle">Geospatial Safety &amp; Legal Intelligence</div>
         </div>
       </div>
-      <div class="motto"><i class="fas fa-quote-left" style="color:var(--cyan);margin-right:6px;"></i>To be informed is to be protected</div>
+      <div class="motto"><i class="fas fa-quote-left" style="color:var(--purple);margin-right:6px;"></i>To be informed is to be protected</div>
       <div class="header-actions">
         <div class="icon-btn badge" onclick="showToast('info', '📬 3 new notifications')" title="Notifications"><i class="fas fa-bell"></i></div>
         <div class="icon-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fas fa-moon"></i></div>
@@ -1175,47 +1351,139 @@
       </div>
     </div>
 
-    <!-- MIXER -->
-    <div class="mixer">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
-        <span style="font-family:var(--font-heading);font-size:14px;color:var(--cyan);">Binary-Ternary Mixer v3.0</span>
-        <span style="font-size:11px;color:var(--text-muted);"><i class="fas fa-arrows-rotate"></i> T↔B · <span class="live-indicator" style="display:inline-flex;"><span class="pulse"></span>Active</span></span>
-      </div>
-      <div class="mixer-grid">
-        <div class="mixer-window">
-          <div class="mw-title">🔢 Binary Window (T→B)</div>
-          <div class="mw-content"><span style="color:var(--text-secondary);">101010</span></div>
-          <div class="mw-actions"><input type="text" value="101010" id="binaryInput" /><button onclick="convertBinary()">→</button></div>
-          <div style="font-size:10px;color:var(--text-muted);">Status: ready</div>
+    <!-- ===== DECISION LOGIC CONVERTER (DLC) v3.0 ===== -->
+    <div class="dlc-module">
+      <div class="dlc-header">
+        <div class="dlc-brand">
+          <div class="dlc-icon"><i class="fas fa-code-branch"></i></div>
+          <div class="dlc-label">
+            <span class="cyan">Decision</span>
+            <span class="purple">Logic</span>
+            <span style="color:var(--text-primary);">Converter</span>
+            <span style="font-size:9px;color:var(--text-muted);font-weight:400;font-family:var(--font-body);"> v3.0</span>
+          </div>
         </div>
-        <div class="mixer-window">
-          <div class="mw-title">🔣 Ternary Window (B→T)</div>
-          <div class="mw-content"><span style="color:var(--text-secondary);" id="ternaryOutput">2101</span></div>
-          <div class="mw-actions"><input type="text" value="2101" id="ternaryInput" /><button onclick="convertTernary()">←</button></div>
-          <div style="font-size:10px;color:var(--text-muted);">Status: ready</div>
-        </div>
-        <div class="mixer-window">
-          <div class="mw-title">🧠 Smart Mixer Window (Auto)</div>
-          <div class="mw-content"><span style="color:var(--cyan);" id="smartOutput">0101 ⇄ 201</span></div>
-          <div class="mw-actions"><input type="text" placeholder="auto-detect" id="smartInput" /><button style="background:var(--cyan);color:var(--bg-primary);" onclick="smartConvert()">🧠 Smart</button></div>
-          <div style="font-size:10px;color:var(--text-muted);">Status: synced</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:10px;color:var(--text-muted);"><i class="fas fa-arrows-rotate"></i> T↔B</span>
+          <span class="live-indicator" style="font-size:9px;"><span class="pulse"></span>Active</span>
         </div>
       </div>
-      <div class="mixer-ext">
+
+      <div class="dlc-grid">
+        <!-- Binary Window (T→B) -->
+        <div class="dlc-window">
+          <div class="win-title"><span class="dot binary"></span> Binary Logic <span style="font-size:7px;color:var(--text-muted);margin-left:auto;">T → B</span></div>
+          <div class="win-content" id="binaryContent">101010</div>
+          <div class="win-input">
+            <input type="text" value="101010" id="binaryInput" />
+            <button onclick="convertBinary()">→</button>
+          </div>
+          <div class="win-status">● Status: ready</div>
+        </div>
+
+        <!-- Ternary Window (B→T) -->
+        <div class="dlc-window">
+          <div class="win-title"><span class="dot ternary"></span> Ternary Logic <span style="font-size:7px;color:var(--text-muted);margin-left:auto;">B → T</span></div>
+          <div class="win-content" id="ternaryContent">2101</div>
+          <div class="win-input">
+            <input type="text" value="2101" id="ternaryInput" />
+            <button onclick="convertTernary()" class="accent">←</button>
+          </div>
+          <div class="win-status">● Status: ready</div>
+        </div>
+
+        <!-- Smart Converter -->
+        <div class="dlc-window">
+          <div class="win-title"><span class="dot smart"></span> Smart Logic <span style="font-size:7px;color:var(--text-muted);margin-left:auto;">🧠 Auto</span></div>
+          <div class="win-content" id="smartContent">0101 ⇄ 201</div>
+          <div class="win-input">
+            <input type="text" placeholder="auto-detect" id="smartInput" />
+            <button onclick="smartConvert()" class="smart">🧠 Smart</button>
+          </div>
+          <div class="win-status">● Status: synced</div>
+        </div>
+      </div>
+
+      <div class="dlc-ext">
         <span onclick="copyResult()"><i class="far fa-copy"></i> Copy</span>
         <span onclick="exportJSON()"><i class="fas fa-file-export"></i> Export JSON</span>
         <span onclick="clearHistory()"><i class="fas fa-undo-alt"></i> Clear History</span>
       </div>
-      <div class="history-log" id="historyLog">
-        ⏱ History Log: 101010 → 2101 (T→B) &nbsp;|&nbsp; 2021 → 10101 (B→T) &nbsp;|&nbsp; 0101 ↔ 201 (Auto)
+
+      <div class="dlc-history" id="historyLog">
+        ⏱ History: 101010 → 2101 (T→B) &nbsp;|&nbsp; 2021 → 10101 (B→T) &nbsp;|&nbsp; 0101 ↔ 201 (Auto)
       </div>
-      <div class="stats-bar">
+
+      <div class="dlc-stats">
         <span class="stat-item">Conversions: <span class="stat-number" id="convCount">142</span></span>
         <span class="stat-item">T→B: <span class="stat-number" id="tbCount">68</span></span>
         <span class="stat-item">B→T: <span class="stat-number" id="btCount">51</span></span>
         <span class="stat-item">Filtered: <span class="stat-number" id="filteredCount">23</span></span>
         <span class="stat-item">Errors: <span class="stat-number" style="color:var(--red);" id="errorCount">0</span></span>
         <span class="stat-item">History: <span class="stat-number" id="historyCount">12</span></span>
+      </div>
+    </div>
+
+    <!-- ===== DCM MODULE ===== -->
+    <div class="dcm-module">
+      <div class="dcm-header-bar">
+        <div class="dcm-brand-sm">
+          <div class="dcm-icon"><i class="fas fa-compass"></i></div>
+          <div class="dcm-label">
+            <span class="purple">D</span><span class="cyan">C</span><span class="white">M</span>
+            <span style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;font-family:var(--font-body);"> · Decision Confidence</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:8px;color:var(--text-muted);font-family:var(--font-mono);">v1.0</span>
+          <span class="live-indicator" style="font-size:9px;"><span class="pulse"></span>Live</span>
+        </div>
+      </div>
+
+      <div class="dcm-grid-sm">
+        <div class="dcm-card" onclick="showToast('info','📊 DCI: 72% — Source Reliability 0.82, Consensus 0.91')">
+          <div class="dcm-value" id="dciDisplay">72</div>
+          <div class="dcm-label-sm">Decision Confidence Index</div>
+        </div>
+        <div class="dcm-card" onclick="showToast('info','📡 Source Reliability: 0.82 — Weighted average of 5 sources')">
+          <div class="dcm-value green">0.82</div>
+          <div class="dcm-label-sm">Source Reliability</div>
+        </div>
+        <div class="dcm-card" onclick="showToast('info','🔄 Consensus: 91% — High agreement among sources')">
+          <div class="dcm-value green">91%</div>
+          <div class="dcm-label-sm">Consensus Weight</div>
+        </div>
+        <div class="dcm-card" onclick="showToast('warning','⚠️ Entropy: 47% — Moderate data density')">
+          <div class="dcm-value gold">47%</div>
+          <div class="dcm-label-sm">Entropy — Unknowns</div>
+        </div>
+      </div>
+
+      <div class="dcm-compass-sm">
+        <div class="dcm-quadrant q1" onclick="showToast('warning','⚡ EVACUATE / COMBAT — High Risk, High DCI')">
+          <div class="q-strategy">⚡ EVACUATE</div>
+          <div style="font-size:6px;color:var(--text-muted);">High Risk · High DCI</div>
+        </div>
+        <div class="dcm-quadrant q2" onclick="showToast('warning','🔍 RECON / DRONE — High Risk, Low DCI')">
+          <div class="q-strategy">🔍 RECON</div>
+          <div style="font-size:6px;color:var(--text-muted);">High Risk · Low DCI</div>
+        </div>
+        <div class="dcm-quadrant q3" onclick="showToast('info','✅ NORMAL / STANDBY — Low Risk, High DCI')">
+          <div class="q-strategy">✅ NORMAL</div>
+          <div style="font-size:6px;color:var(--text-muted);">Low Risk · High DCI</div>
+        </div>
+        <div class="dcm-quadrant q4" onclick="showToast('info','👁️ MONITOR / OBSERVE — Low Risk, Low DCI')">
+          <div class="q-strategy">👁️ MONITOR</div>
+          <div style="font-size:6px;color:var(--text-muted);">Low Risk · Low DCI</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;font-size:8px;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.03);padding-top:6px;display:flex;justify-content:space-between;flex-wrap:wrap;">
+        <span><i class="fas fa-bullhorn" style="color:var(--gold);"></i> <strong>Recommendation:</strong> <span style="color:var(--gold);">CONDITIONAL APPROVAL</span></span>
+        <span><i class="fas fa-shield-alt" style="color:var(--green);"></i> 4 scenarios active</span>
+        <span onclick="showToast('info','🧠 DCM Formula: DCI = (S_r · W_s) × (1 - C_f) × F_t × E_v')" style="cursor:pointer;color:var(--purple);">
+          <i class="fas fa-calculator"></i> Formula
+        </span>
       </div>
     </div>
 
@@ -1373,31 +1641,26 @@
 
     // ================================================================
     // GIS STS v6.0 — Enterprise Geospatial Safety & Legal Intelligence
+    // with DLC (Decision Logic Converter) & DCM (Decision Confidence Matrix)
     // ================================================================
 
     // ===== STATE =====
     const APP_STATE = {
       version: '6.0.0',
-      countries: 195,
-      monitoring: 87,
-      advisories: 12,
-      incidents: 4,
-      travelers: 1247,
-      sriScore: 72,
-      isFullscreen: false,
-      darkMode: true,
-      tickerPaused: false,
+      dci: 72,
+      entropy: 47,
       convCount: 142,
       tbCount: 68,
       btCount: 51,
       filteredCount: 23,
       errorCount: 0,
-      historyCount: 12
+      historyCount: 12,
+      darkMode: true,
+      tickerPaused: false,
+      isFullscreen: false
     };
 
-    // ================================================================
-    // SPLASH SCREEN
-    // ================================================================
+    // ===== SPLASH SCREEN =====
     setTimeout(function() {
       const splash = document.getElementById('splashOverlay');
       if (splash) {
@@ -1408,9 +1671,7 @@
       }
     }, 2500);
 
-    // ================================================================
-    // TOAST SYSTEM
-    // ================================================================
+    // ===== TOAST SYSTEM =====
     window.showToast = function(type, message) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
@@ -1432,9 +1693,7 @@
       }, 5000);
     };
 
-    // ================================================================
-    // THEME TOGGLE
-    // ================================================================
+    // ===== THEME TOGGLE =====
     window.toggleTheme = function() {
       APP_STATE.darkMode = !APP_STATE.darkMode;
       document.documentElement.setAttribute('data-theme', APP_STATE.darkMode ? 'dark' : 'light');
@@ -1445,15 +1704,12 @@
       showToast('info', APP_STATE.darkMode ? '🌙 Dark theme activated' : '☀️ Light theme activated');
     };
 
-    // ================================================================
-    // FULLSCREEN TOGGLE
-    // ================================================================
-    let isFullscreen = false;
+    // ===== FULLSCREEN TOGGLE =====
     const sceneContainer = document.getElementById('scene-container');
 
     window.toggleFullscreen = function() {
-      isFullscreen = !isFullscreen;
-      if (isFullscreen) {
+      APP_STATE.isFullscreen = !APP_STATE.isFullscreen;
+      if (APP_STATE.isFullscreen) {
         if (sceneContainer.requestFullscreen) {
           sceneContainer.requestFullscreen().catch(() => {});
         }
@@ -1471,22 +1727,18 @@
     document.addEventListener('fullscreenchange', function() {
       if (!document.fullscreenElement) {
         sceneContainer.classList.remove('fullscreen');
-        isFullscreen = false;
+        APP_STATE.isFullscreen = false;
       }
     });
 
-    // ================================================================
-    // TAB SWITCHING
-    // ================================================================
+    // ===== TAB SWITCHING =====
     window.switchTab = function(el) {
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       el.classList.add('active');
       showToast('info', `📍 ${el.textContent.trim()} view`);
     };
 
-    // ================================================================
-    // LEGAL DETAIL TOGGLE
-    // ================================================================
+    // ===== LEGAL DETAIL TOGGLE =====
     window.toggleDetail = function(el) {
       const detail = el.nextElementSibling;
       if (detail && detail.classList && detail.classList.contains('legal-detail')) {
@@ -1513,9 +1765,7 @@
       }
     };
 
-    // ================================================================
-    // EMERGENCY CALL
-    // ================================================================
+    // ===== EMERGENCY CALL =====
     window.callEmergency = function(name, number) {
       showToast('warning', `📞 Calling ${name} at ${number}...`);
       setTimeout(() => {
@@ -1523,9 +1773,7 @@
       }, 1500);
     };
 
-    // ================================================================
-    // SOS ALERT
-    // ================================================================
+    // ===== SOS ALERT =====
     window.sosAlert = function() {
       showToast('error', '🚨 SOS! Emergency services alerted...');
       setTimeout(() => {
@@ -1533,9 +1781,7 @@
       }, 1500);
     };
 
-    // ================================================================
-    // AI FUNCTIONS
-    // ================================================================
+    // ===== AI FUNCTIONS =====
     window.refreshAI = function() {
       showToast('success', '🧠 AI intelligence refreshed');
       const aiMsg = document.getElementById('aiMessage');
@@ -1563,9 +1809,7 @@
       document.getElementById('chatInput')?.focus();
     };
 
-    // ================================================================
-    // CHAT HANDLER
-    // ================================================================
+    // ===== CHAT HANDLER =====
     window.handleChat = function() {
       const input = document.getElementById('chatInput');
       if (input && input.value.trim()) {
@@ -1599,9 +1843,7 @@
       }
     };
 
-    // ================================================================
-    // SUBSCRIBE
-    // ================================================================
+    // ===== SUBSCRIBE =====
     window.subscribe = function() {
       const email = document.getElementById('subscribeEmail');
       if (email && email.value.trim()) {
@@ -1613,7 +1855,7 @@
     };
 
     // ================================================================
-    // MIXER FUNCTIONS
+    // DECISION LOGIC CONVERTER (DLC) v3.0
     // ================================================================
     window.convertBinary = function() {
       const input = document.getElementById('binaryInput');
@@ -1622,10 +1864,10 @@
       if (!/^[01]+$/.test(val)) { showToast('error', '❌ Invalid binary number'); return; }
       const decimal = parseInt(val, 2);
       const ternary = decimal.toString(3);
-      document.getElementById('ternaryOutput').textContent = ternary;
+      document.getElementById('ternaryContent').textContent = ternary;
       document.getElementById('ternaryInput').value = ternary;
       showToast('success', `✅ ${val} → ${ternary} (T→B)`);
-      updateHistory(`${val} → ${ternary} (T→B)`);
+      updateDLC(`${val} → ${ternary} (T→B)`);
       updateCounter('convCount');
     };
 
@@ -1637,8 +1879,9 @@
       const decimal = parseInt(val, 3);
       const binary = decimal.toString(2);
       document.getElementById('binaryInput').value = binary;
+      document.getElementById('binaryContent').textContent = binary;
       showToast('success', `✅ ${val} → ${binary} (B→T)`);
-      updateHistory(`${val} → ${binary} (B→T)`);
+      updateDLC(`${val} → ${binary} (B→T)`);
       updateCounter('convCount');
     };
 
@@ -1650,17 +1893,18 @@
       if (isNaN(decimal)) { showToast('error', '❌ Invalid number'); return; }
       const binary = decimal.toString(2);
       const ternary = decimal.toString(3);
-      document.getElementById('smartOutput').textContent = `${binary} ⇄ ${ternary}`;
+      document.getElementById('smartContent').textContent = `${binary} ⇄ ${ternary}`;
       document.getElementById('binaryInput').value = binary;
-      document.getElementById('ternaryOutput').textContent = ternary;
+      document.getElementById('binaryContent').textContent = binary;
+      document.getElementById('ternaryContent').textContent = ternary;
       document.getElementById('ternaryInput').value = ternary;
       showToast('success', `🧠 Smart: ${val} → Binary: ${binary}, Ternary: ${ternary}`);
-      updateHistory(`${val} → Binary: ${binary}, Ternary: ${ternary} (Smart)`);
+      updateDLC(`${val} → Binary: ${binary}, Ternary: ${ternary} (Smart)`);
       updateCounter('convCount');
     };
 
     window.copyResult = function() {
-      const smartOutput = document.getElementById('smartOutput');
+      const smartOutput = document.getElementById('smartContent');
       if (smartOutput) {
         navigator.clipboard?.writeText(smartOutput.textContent).then(() => {
           showToast('success', '📋 Copied to clipboard');
@@ -1675,8 +1919,8 @@
         version: APP_STATE.version,
         timestamp: new Date().toISOString(),
         binary: document.getElementById('binaryInput')?.value || '',
-        ternary: document.getElementById('ternaryOutput')?.textContent || '',
-        smart: document.getElementById('smartOutput')?.textContent || '',
+        ternary: document.getElementById('ternaryContent')?.textContent || '',
+        smart: document.getElementById('smartContent')?.textContent || '',
         history: document.getElementById('historyLog')?.textContent || '',
         stats: {
           conversions: APP_STATE.convCount,
@@ -1692,7 +1936,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `mixer_export_${Date.now()}.json`;
+      a.download = `dlc_export_${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast('success', '📦 Exported to JSON');
@@ -1703,7 +1947,7 @@
       showToast('warning', '🗑️ History cleared');
     };
 
-    function updateHistory(entry) {
+    function updateDLC(entry) {
       const log = document.getElementById('historyLog');
       const current = log.textContent;
       if (current.includes('History cleared')) {
@@ -1723,16 +1967,15 @@
         const newVal = current + 1;
         el.textContent = newVal;
         APP_STATE[id] = newVal;
-        // Flash animation
         el.classList.remove('counter-flash');
         void el.offsetWidth;
         el.classList.add('counter-flash');
       }
     }
 
-    // Add CSS for counter flash
-    const style = document.createElement('style');
-    style.textContent = `
+    // Counter flash style
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
       .counter-flash {
         animation: flash 0.4s ease;
       }
@@ -1742,7 +1985,65 @@
         100% { transform: scale(1); }
       }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(styleEl);
+
+    // Enter key support for DLC
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('binaryInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); convertBinary(); }
+      });
+      document.getElementById('ternaryInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); convertTernary(); }
+      });
+      document.getElementById('smartInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); smartConvert(); }
+      });
+    });
+
+    // ================================================================
+    // DCM — DECISION CONFIDENCE MATRIX
+    // ================================================================
+    function updateDCI(value) {
+      const display = document.getElementById('dciDisplay');
+      if (!display) return;
+      display.textContent = value;
+      APP_STATE.dci = value;
+
+      if (value >= 80) {
+        display.className = 'dcm-value green';
+      } else if (value >= 50) {
+        display.className = 'dcm-value gold';
+      } else {
+        display.className = 'dcm-value red';
+      }
+    }
+
+    function updateEntropy(value) {
+      const entropyEl = document.querySelector('.dcm-card:nth-child(4) .dcm-value');
+      if (entropyEl) {
+        entropyEl.textContent = value + '%';
+        APP_STATE.entropy = value;
+        if (value >= 70) {
+          entropyEl.className = 'dcm-value red';
+        } else if (value >= 40) {
+          entropyEl.className = 'dcm-value gold';
+        } else {
+          entropyEl.className = 'dcm-value green';
+        }
+      }
+    }
+
+    function randomDCI() {
+      const base = APP_STATE.dci || 72;
+      const variation = Math.floor(Math.random() * 10) - 5;
+      const newValue = Math.max(20, Math.min(95, base + variation));
+      updateDCI(newValue);
+
+      const entropyBase = APP_STATE.entropy || 47;
+      const entropyVar = Math.floor(Math.random() * 12) - 6;
+      const newEntropy = Math.max(10, Math.min(90, entropyBase + entropyVar));
+      updateEntropy(newEntropy);
+    }
 
     // ================================================================
     // GAUGE ANIMATION
@@ -1814,6 +2115,8 @@
     // ================================================================
     setTimeout(() => showToast('info', '🌐 GIS STS v6.0 loaded · System active'), 800);
     setTimeout(() => showToast('success', '📡 Satellite link established'), 2500);
+    setTimeout(() => showToast('info', '🧭 DCM — Decision Confidence Engine active'), 3000);
+    setTimeout(() => showToast('info', '🔷 DLC — Decision Logic Converter v3.0 ready'), 3500);
 
     // ================================================================
     // LIVE DOTS PULSE REFRESH
@@ -1884,6 +2187,11 @@
       }
       showToast('info', '🔄 News ticker reset');
     };
+
+    // ================================================================
+    // DCM AUTO-UPDATE
+    // ================================================================
+    setInterval(randomDCI, 8000);
 
     // ================================================================
     // THREE.JS GLOBE SCENE
@@ -2221,9 +2529,19 @@
       initGlobe();
     }, 600);
 
+    // ================================================================
+    // INIT DCM
+    // ================================================================
+    setTimeout(() => {
+      updateDCI(72);
+      updateEntropy(47);
+    }, 400);
+
     console.log(`🚀 GIS STS v${APP_STATE.version} — Enterprise Geospatial Safety & Legal Intelligence`);
-    console.log('✨ New: Enhanced UX, Tooltips, Counter animations, Improved responsiveness');
-    console.log('🔷 Binary-Ternary Mixer v3.0 — Active');
+    console.log('✨ New: DLC (Decision Logic Converter) v3.0 — renamed from Binary-Ternary Mixer');
+    console.log('🧭 DCM (Decision Confidence Matrix) v1.0 — Integrated');
+    console.log('🔷 DLC Formula: Binary ↔ Ternary ↔ Smart Logic Conversion');
+    console.log('🧮 DCM Formula: DCI = (S_r · W_s) × (1 - C_f) × F_t × E_v');
     console.log('🌍 Click any country on the globe to simulate selection');
     console.log('🔄 Drag to rotate · Scroll to zoom · F for fullscreen');
   })();
